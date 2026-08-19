@@ -183,6 +183,8 @@ var chunk_collision_root: Node3D
 var chunk_mesh_instances: Dictionary = {}
 var chunk_water_mesh_instances: Dictionary = {}
 var chunk_collision_bodies: Dictionary = {}
+var chunk_mesh_resources: Dictionary = {}
+var chunk_water_mesh_resources: Dictionary = {}
 var chunk_world_material: StandardMaterial3D
 var chunk_water_material: ShaderMaterial
 var dirty_chunk_rebuild_count: int = 0
@@ -658,6 +660,8 @@ func _prepare_chunk_storage_from_blocks() -> void:
     chunk_mesh_instances.clear()
     chunk_water_mesh_instances.clear()
     chunk_collision_bodies.clear()
+    chunk_mesh_resources.clear()
+    chunk_water_mesh_resources.clear()
     if not chunk_storage.is_empty():
         blocks.clear()
         stream_center = Vector2i(-999, -999)
@@ -3726,10 +3730,12 @@ func _remove_chunk_render(key: Vector2i) -> void:
     if is_instance_valid(mesh):
         mesh.queue_free()
     chunk_mesh_instances.erase(key)
+    chunk_mesh_resources.erase(key)
     var water_mesh := chunk_water_mesh_instances.get(key) as MeshInstance3D
     if is_instance_valid(water_mesh):
         water_mesh.queue_free()
     chunk_water_mesh_instances.erase(key)
+    chunk_water_mesh_resources.erase(key)
     var body := chunk_collision_bodies.get(key) as StaticBody3D
     if is_instance_valid(body):
         body.queue_free()
@@ -3787,24 +3793,25 @@ func _rebuild_chunk_mesh(key: Vector2i) -> int:
     for cell_variant in chunk.keys():
         var cell: Vector3i = cell_variant
         var block_type := int(chunk[cell])
-        var exposed := false
-        for face_index in range(6):
-            if _should_draw_face(block_type, _get_block(cell + _face_offset(face_index))):
-                exposed = true
-                break
-        if not exposed:
-            continue
-        visible_cells += 1
+        var cell_exposed := false
         for face_index in range(6):
             if not _should_draw_face(block_type, _get_block(cell + _face_offset(face_index))):
                 continue
+            cell_exposed = true
             if block_type == WATER or block_type == ASH_FLUID:
                 _append_face_arrays(water_vertices, water_normals, water_colors, water_uvs, cell, block_type, face_index)
             else:
                 _append_face_arrays(vertices, normals, colors, uvs, cell, block_type, face_index)
+        if cell_exposed:
+            visible_cells += 1
 
     var mesh_instance := _chunk_mesh_instance(key)
     mesh_instance.material_override = _get_chunk_world_material()
+    var voxel_mesh := chunk_mesh_resources.get(key) as ArrayMesh
+    if not is_instance_valid(voxel_mesh):
+        voxel_mesh = ArrayMesh.new()
+        chunk_mesh_resources[key] = voxel_mesh
+    voxel_mesh.clear_surfaces()
     if vertices.is_empty():
         mesh_instance.mesh = null
     else:
@@ -3814,12 +3821,16 @@ func _rebuild_chunk_mesh(key: Vector2i) -> int:
         mesh_arrays[Mesh.ARRAY_NORMAL] = normals
         mesh_arrays[Mesh.ARRAY_COLOR] = colors
         mesh_arrays[Mesh.ARRAY_TEX_UV] = uvs
-        var voxel_mesh := ArrayMesh.new()
         voxel_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh_arrays)
         mesh_instance.mesh = voxel_mesh
 
     var water_mesh_instance_local := _chunk_water_mesh_instance(key)
     water_mesh_instance_local.material_override = _get_chunk_water_material()
+    var water_mesh := chunk_water_mesh_resources.get(key) as ArrayMesh
+    if not is_instance_valid(water_mesh):
+        water_mesh = ArrayMesh.new()
+        chunk_water_mesh_resources[key] = water_mesh
+    water_mesh.clear_surfaces()
     if water_vertices.is_empty():
         water_mesh_instance_local.mesh = null
     else:
@@ -3829,7 +3840,6 @@ func _rebuild_chunk_mesh(key: Vector2i) -> int:
         water_arrays[Mesh.ARRAY_NORMAL] = water_normals
         water_arrays[Mesh.ARRAY_COLOR] = water_colors
         water_arrays[Mesh.ARRAY_TEX_UV] = water_uvs
-        var water_mesh := ArrayMesh.new()
         water_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, water_arrays)
         water_mesh_instance_local.mesh = water_mesh
 
@@ -3841,7 +3851,9 @@ func _rebuild_chunk_mesh(key: Vector2i) -> int:
         body.add_child(collision_shape)
     var collision_faces := _build_chunk_collision_faces(key)
     if collision_faces.size() > 0:
-        var concave := ConcavePolygonShape3D.new()
+        var concave := collision_shape.shape as ConcavePolygonShape3D
+        if not is_instance_valid(concave):
+            concave = ConcavePolygonShape3D.new()
         concave.set_faces(collision_faces)
         collision_shape.shape = concave
     else:
