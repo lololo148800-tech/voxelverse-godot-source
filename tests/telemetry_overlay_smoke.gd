@@ -15,6 +15,8 @@ func _ready() -> void:
         print("TELEMETRY_SMOKE_FAIL initial_state")
         get_tree().quit(1)
         return
+    if FileAccess.file_exists(world.TELEMETRY_LOG_PATH):
+        DirAccess.remove_absolute(ProjectSettings.globalize_path(world.TELEMETRY_LOG_PATH))
     world._toggle_telemetry()
     await get_tree().process_frame
     world._update_telemetry()
@@ -29,6 +31,21 @@ func _ready() -> void:
         print("TELEMETRY_SMOKE_FAIL disable_state")
         get_tree().quit(1)
         return
-    print("TELEMETRY_SMOKE_PASS toggle=true fps=true rebuild=true dirty=true loaded=true")
+    var log_ok := false
+    var log_lines := 0
+    var log_file := FileAccess.open(world.TELEMETRY_LOG_PATH, FileAccess.READ)
+    if log_file != null:
+        while not log_file.eof_reached():
+            var line := log_file.get_line()
+            if not line.is_empty():
+                log_lines += 1
+                if line.begins_with("unix_time,session_ms,fps,frame_ms,"):
+                    log_ok = true
+        log_file.close()
+    if not log_ok or log_lines < 2 or world.telemetry_log_enabled:
+        print("TELEMETRY_SMOKE_FAIL log_ok=%s lines=%d logger_enabled=%s" % [log_ok, log_lines, world.telemetry_log_enabled])
+        get_tree().quit(1)
+        return
+    print("TELEMETRY_SMOKE_PASS toggle=true fps=true rebuild=true dirty=true loaded=true csv=true lines=%d" % log_lines)
     get_tree().quit(0)
 

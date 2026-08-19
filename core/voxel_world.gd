@@ -21,6 +21,7 @@ const QUEST_DATA_PATH := "res://data/quests.json"
 const HORROR_DATA_PATH := "res://data/horror_encounters.json"
 const BOSS_ARENA_DATA_PATH := "res://data/boss_arenas.json"
 const VOXEL_ATLAS_PATH := "res://assets/textures/voxel_atlas.png"
+const TELEMETRY_LOG_PATH := "user://voxelverse_telemetry.csv"
 
 const WORLD_SIZE_X: int = 64
 const WORLD_SIZE_Y: int = 16
@@ -265,6 +266,9 @@ var telemetry_enabled: bool = false
 var telemetry_update_timer: float = 0.0
 var telemetry_frame_accum: float = 0.0
 var telemetry_frame_samples: int = 0
+var telemetry_log: FileAccess
+var telemetry_log_enabled: bool = false
+var telemetry_log_records: int = 0
 var mobile_overlay: Control
 var compact_hp_bar: ProgressBar
 var compact_hunger_bar: ProgressBar
@@ -341,6 +345,9 @@ var recipes: Array[Dictionary] = [
 	{"output": ECHO_LANTERN, "count": 1, "input": {ECHO_SHARD: 2, GLOW: 1}, "station": WORKBENCH},
 	{"output": DEEP_CRYSTAL, "count": 1, "input": {CRYSTAL: 4, ECHO_SHARD: 1}, "station": STOVE}
 ]
+
+func _exit_tree() -> void:
+    _close_telemetry_log()
 
 func _ready() -> void:
     _load_world_config()
@@ -1823,7 +1830,42 @@ func _toggle_telemetry() -> void:
     if is_instance_valid(telemetry_button):
         telemetry_button.text = "FPS ON" if telemetry_enabled else "FPS"
     if telemetry_enabled:
+        _open_telemetry_log()
         _update_telemetry()
+    else:
+        _close_telemetry_log()
+
+func _open_telemetry_log() -> void:
+    _close_telemetry_log()
+    if not FileAccess.file_exists(TELEMETRY_LOG_PATH):
+        var create_file := FileAccess.open(TELEMETRY_LOG_PATH, FileAccess.WRITE)
+        if create_file != null:
+            create_file.close()
+    telemetry_log = FileAccess.open(TELEMETRY_LOG_PATH, FileAccess.READ_WRITE)
+    if telemetry_log == null:
+        telemetry_log_enabled = false
+        push_warning("Telemetry log could not be opened: " + TELEMETRY_LOG_PATH)
+        return
+    telemetry_log.seek_end()
+    if telemetry_log.get_length() == 0:
+        telemetry_log.store_line("unix_time,session_ms,fps,frame_ms,rebuild_last_ms,rebuild_max_ms,rebuild_calls,dirty_total,dirty_last,pending_dirty,loaded_chunks,visible_cells")
+    telemetry_log.flush()
+    telemetry_log_enabled = true
+    telemetry_log_records = 0
+
+func _close_telemetry_log() -> void:
+    if telemetry_log != null:
+        telemetry_log.flush()
+        telemetry_log.close()
+    telemetry_log = null
+    telemetry_log_enabled = false
+
+func _write_telemetry_record(fps: int, average_frame_ms: float) -> void:
+    if not telemetry_log_enabled or telemetry_log == null:
+        return
+    telemetry_log.store_line("%.3f,%d,%d,%.3f,%.3f,%.3f,%d,%d,%d,%d,%d,%d" % [Time.get_unix_time_from_system(), Time.get_ticks_msec(), fps, average_frame_ms, last_mesh_rebuild_ms, max_mesh_rebuild_ms, mesh_rebuild_count, dirty_chunk_rebuild_count, last_dirty_chunk_count, dirty_chunk_keys.size(), loaded_chunk_keys.size(), last_mesh_rebuild_cells])
+    telemetry_log_records += 1
+    telemetry_log.flush()
 
 func _update_telemetry() -> void:
     if not is_instance_valid(telemetry_label):
@@ -1837,7 +1879,9 @@ func _update_telemetry() -> void:
     telemetry_label.text += "rebuild calls: %d\n" % mesh_rebuild_count
     telemetry_label.text += "dirty total/last: %d / %d\n" % [dirty_chunk_rebuild_count, last_dirty_chunk_count]
     telemetry_label.text += "pending dirty: %d  loaded: %d\n" % [dirty_chunk_keys.size(), loaded_chunk_keys.size()]
-    telemetry_label.text += "visible cells: %d" % last_mesh_rebuild_cells
+    telemetry_label.text += "visible cells: %d\n" % last_mesh_rebuild_cells
+    telemetry_label.text += "log: %s  records: %d\n%s" % ["ON" if telemetry_log_enabled else "OFF", telemetry_log_records, TELEMETRY_LOG_PATH]
+    _write_telemetry_record(fps, average_frame_ms)
     telemetry_frame_accum = 0.0
     telemetry_frame_samples = 0
 
