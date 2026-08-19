@@ -175,7 +175,17 @@ var dungeon_origin := Vector3i(50, 0, 50)
 var mob_simulation_radius: float = 26.0
 var world_mesh_instance: Node3D
 var water_mesh_instance: MeshInstance3D
-var world_body: StaticBody3D
+var world_body: Node3D
+var chunk_mesh_root: Node3D
+var chunk_water_mesh_root: Node3D
+var chunk_collision_root: Node3D
+var chunk_mesh_instances: Dictionary = {}
+var chunk_water_mesh_instances: Dictionary = {}
+var chunk_collision_bodies: Dictionary = {}
+var chunk_world_material: StandardMaterial3D
+var chunk_water_material: ShaderMaterial
+var dirty_chunk_rebuild_count: int = 0
+var last_dirty_chunk_count: int = 0
 var last_mesh_rebuild_ms: float = 0.0
 var max_mesh_rebuild_ms: float = 0.0
 var last_mesh_rebuild_cells: int = 0
@@ -622,6 +632,9 @@ func _ensure_chunk(key: Vector2i) -> Dictionary:
 func _prepare_chunk_storage_from_blocks() -> void:
     loaded_chunk_keys.clear()
     dirty_chunk_keys.clear()
+    chunk_mesh_instances.clear()
+    chunk_water_mesh_instances.clear()
+    chunk_collision_bodies.clear()
     if not chunk_storage.is_empty():
         blocks.clear()
         stream_center = Vector2i(-999, -999)
@@ -646,6 +659,16 @@ func _get_stored_block(cell: Vector3i) -> int:
     var chunk: Dictionary = chunk_storage.get(chunk_key, {})
     return int(chunk.get(cell, AIR))
 
+func _mark_chunk_dirty(key: Vector2i) -> void:
+    if _chunk_key_in_bounds(key) and loaded_chunk_keys.has(key):
+        dirty_chunk_keys[key] = true
+
+func _mark_cell_chunk_and_neighbors_dirty(cell: Vector3i) -> void:
+    var chunk_key := _chunk_key_for_cell(cell)
+    _mark_chunk_dirty(chunk_key)
+    for offset in [Vector3i.LEFT, Vector3i.RIGHT, Vector3i.FORWARD, Vector3i.BACK, Vector3i.UP, Vector3i.DOWN]:
+        _mark_chunk_dirty(_chunk_key_for_cell(cell + offset))
+
 func _set_runtime_block(cell: Vector3i, block_type: int) -> void:
     if not _inside_world(cell):
         return
@@ -658,7 +681,7 @@ func _set_runtime_block(cell: Vector3i, block_type: int) -> void:
         chunk[cell] = block_type
         if loaded_chunk_keys.has(chunk_key):
             blocks[cell] = block_type
-    dirty_chunk_keys[chunk_key] = true
+    _mark_cell_chunk_and_neighbors_dirty(cell)
     if block_type == WATER or block_type == ASH_FLUID:
         if not fluid_depth.has(cell):
             fluid_depth[cell] = 0
@@ -936,6 +959,8 @@ func _stream_world_around_player(force: bool = false) -> void:
             var loaded_chunk: Dictionary = chunk_storage.get(loaded_key, {})
             for cell_variant in loaded_chunk.keys():
                 blocks.erase(cell_variant)
+            _remove_chunk_render(loaded_key)
+            dirty_chunk_keys.erase(loaded_key)
             loaded_chunk_keys.erase(loaded_key)
     for desired_key_variant in desired.keys():
         var desired_key: Vector2i = desired_key_variant
@@ -945,6 +970,9 @@ func _stream_world_around_player(force: bool = false) -> void:
         for cell_variant in desired_chunk.keys():
             blocks[cell_variant] = int(desired_chunk[cell_variant])
         loaded_chunk_keys[desired_key] = true
+        dirty_chunk_keys[desired_key] = true
+    for loaded_key_variant in loaded_chunk_keys.keys():
+        dirty_chunk_keys[loaded_key_variant] = true
     _rebuild_world_mesh()
     generated_message = "Чанки: %d загружено / %d сохранено" % [loaded_chunk_keys.size(), chunk_storage.size()]
 
@@ -3525,28 +3553,106 @@ func _should_draw_face(block_type: int, neighbor_type: int) -> bool:
         return true
     return false
 
-func _rebuild_world_mesh(force: bool = false) -> void:
-    var rebuild_started_usec: int = Time.get_ticks_usec()
-    if mesh_rebuild_cooldown > 0.0 and not force:
-        mesh_rebuild_deferred = true
-        return
-    mesh_rebuild_count += 1
-    var visible_cells: Array[Vector3i] = []
-    for cell_variant in blocks.keys():
-        var cell: Vector3i = cell_variant
-        var exposed := false
-        for face_index in range(6):
-            if _should_draw_face(int(blocks[cell]), _get_block(cell + _face_offset(face_index))):
-                exposed = true
-                break
-        if exposed:
-            visible_cells.append(cell)
-    if visible_cells.is_empty():
-        last_mesh_rebuild_cells = 0
-        last_mesh_rebuild_ms = float(Time.get_ticks_usec() - rebuild_started_usec) / 1000.0
-        max_mesh_rebuild_ms = maxf(max_mesh_rebuild_ms, last_mesh_rebuild_ms)
-        return
+func _ensure_chunk_render_roots() -> void:
+    if not is_instance_valid(chunk_mesh_root):
+        chunk_mesh_root = Node3D.new()
+        chunk_mesh_root.name = "VoxelMesh"
+        add_child(chunk_mesh_root)
+        world_mesh_instance = chunk_mesh_root
+    if not is_instance_valid(chunk_water_mesh_root):
+        chunk_water_mesh_root = Node3D.new()
+        chunk_water_mesh_root.name = "WaterSurfaceMesh"
+        add_child(chunk_water_mesh_root)
+    if not is_instance_valid(chunk_collision_root):
+        chunk_collision_root = Node3D.new()
+        chunk_collision_root.name = "VoxelCollision"
+        add_child(chunk_collision_root)
+        world_body = chunk_collision_root
 
+func _chunk_mesh_instance(key: Vector2i) -> MeshInstance3D:
+    _ensure_chunk_render_roots()
+    var node := chunk_mesh_instances.get(key) as MeshInstance3D
+    if not is_instance_valid(node):
+        node = MeshInstance3D.new()
+        node.name = "ChunkMesh_%d_%d" % [key.x, key.y]
+        chunk_mesh_root.add_child(node)
+        chunk_mesh_instances[key] = node
+    return node
+
+func _chunk_water_mesh_instance(key: Vector2i) -> MeshInstance3D:
+    _ensure_chunk_render_roots()
+    var node := chunk_water_mesh_instances.get(key) as MeshInstance3D
+    if not is_instance_valid(node):
+        node = MeshInstance3D.new()
+        node.name = "ChunkWater_%d_%d" % [key.x, key.y]
+        chunk_water_mesh_root.add_child(node)
+        chunk_water_mesh_instances[key] = node
+    return node
+
+func _chunk_collision_body(key: Vector2i) -> StaticBody3D:
+    _ensure_chunk_render_roots()
+    var body := chunk_collision_bodies.get(key) as StaticBody3D
+    if not is_instance_valid(body):
+        body = StaticBody3D.new()
+        body.name = "ChunkCollision_%d_%d" % [key.x, key.y]
+        chunk_collision_root.add_child(body)
+        chunk_collision_bodies[key] = body
+    return body
+
+func _remove_chunk_render(key: Vector2i) -> void:
+    var mesh := chunk_mesh_instances.get(key) as MeshInstance3D
+    if is_instance_valid(mesh):
+        mesh.queue_free()
+    chunk_mesh_instances.erase(key)
+    var water_mesh := chunk_water_mesh_instances.get(key) as MeshInstance3D
+    if is_instance_valid(water_mesh):
+        water_mesh.queue_free()
+    chunk_water_mesh_instances.erase(key)
+    var body := chunk_collision_bodies.get(key) as StaticBody3D
+    if is_instance_valid(body):
+        body.queue_free()
+    chunk_collision_bodies.erase(key)
+
+func _get_chunk_world_material() -> StandardMaterial3D:
+    if chunk_world_material == null:
+        chunk_world_material = StandardMaterial3D.new()
+        chunk_world_material.vertex_color_use_as_albedo = true
+        chunk_world_material.albedo_texture = voxel_atlas_texture
+        chunk_world_material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+        chunk_world_material.cull_mode = BaseMaterial3D.CULL_BACK
+        chunk_world_material.roughness = 0.92
+        chunk_world_material.metallic = 0.03
+        chunk_world_material.shading_mode = BaseMaterial3D.SHADING_MODE_PER_VERTEX if OS.has_feature("mobile") else BaseMaterial3D.SHADING_MODE_PER_PIXEL
+    return chunk_world_material
+
+func _get_chunk_water_material() -> ShaderMaterial:
+    if chunk_water_material == null:
+        chunk_water_material = ShaderMaterial.new()
+        chunk_water_material.shader = WaterSurfaceShader
+    return chunk_water_material
+
+func _build_chunk_collision_faces(key: Vector2i) -> PackedVector3Array:
+    var faces := PackedVector3Array()
+    var chunk: Dictionary = chunk_storage.get(key, {})
+    for cell_variant in chunk.keys():
+        var cell: Vector3i = cell_variant
+        for face_index in range(6):
+            if _get_block(cell + _face_offset(face_index)) == AIR:
+                var base := Vector3(cell)
+                var vertices: Array[Vector3] = _face_vertices(face_index)
+                faces.append(base + vertices[0])
+                faces.append(base + vertices[1])
+                faces.append(base + vertices[2])
+                faces.append(base + vertices[0])
+                faces.append(base + vertices[2])
+                faces.append(base + vertices[3])
+    return faces
+
+func _rebuild_chunk_mesh(key: Vector2i) -> int:
+    if not loaded_chunk_keys.has(key):
+        _remove_chunk_render(key)
+        return 0
+    var chunk: Dictionary = chunk_storage.get(key, {})
     var vertices := PackedVector3Array()
     var normals := PackedVector3Array()
     var colors := PackedColorArray()
@@ -3555,28 +3661,28 @@ func _rebuild_world_mesh(force: bool = false) -> void:
     var water_normals := PackedVector3Array()
     var water_colors := PackedColorArray()
     var water_uvs := PackedVector2Array()
-    for cell in visible_cells:
-        var block_type := int(blocks[cell])
+    var visible_cells := 0
+    for cell_variant in chunk.keys():
+        var cell: Vector3i = cell_variant
+        var block_type := int(chunk[cell])
+        var exposed := false
         for face_index in range(6):
             if _should_draw_face(block_type, _get_block(cell + _face_offset(face_index))):
-                if block_type == WATER:
-                    _append_face_arrays(water_vertices, water_normals, water_colors, water_uvs, cell, block_type, face_index)
-                else:
-                    _append_face_arrays(vertices, normals, colors, uvs, cell, block_type, face_index)
-    var world_material := StandardMaterial3D.new()
-    world_material.vertex_color_use_as_albedo = true
-    world_material.albedo_texture = voxel_atlas_texture
-    world_material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-    world_material.cull_mode = BaseMaterial3D.CULL_BACK
-    world_material.roughness = 0.92
-    world_material.metallic = 0.03
-    world_material.shading_mode = BaseMaterial3D.SHADING_MODE_PER_VERTEX if OS.has_feature("mobile") else BaseMaterial3D.SHADING_MODE_PER_PIXEL
-    if not is_instance_valid(world_mesh_instance):
-        var voxel_instances := MeshInstance3D.new()
-        voxel_instances.name = "VoxelMesh"
-        world_mesh_instance = voxel_instances
-        add_child(world_mesh_instance)
-    var mesh_instance := world_mesh_instance as MeshInstance3D
+                exposed = true
+                break
+        if not exposed:
+            continue
+        visible_cells += 1
+        for face_index in range(6):
+            if not _should_draw_face(block_type, _get_block(cell + _face_offset(face_index))):
+                continue
+            if block_type == WATER or block_type == ASH_FLUID:
+                _append_face_arrays(water_vertices, water_normals, water_colors, water_uvs, cell, block_type, face_index)
+            else:
+                _append_face_arrays(vertices, normals, colors, uvs, cell, block_type, face_index)
+
+    var mesh_instance := _chunk_mesh_instance(key)
+    mesh_instance.material_override = _get_chunk_world_material()
     if vertices.is_empty():
         mesh_instance.mesh = null
     else:
@@ -3589,14 +3695,11 @@ func _rebuild_world_mesh(force: bool = false) -> void:
         var voxel_mesh := ArrayMesh.new()
         voxel_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh_arrays)
         mesh_instance.mesh = voxel_mesh
-    mesh_instance.material_override = world_material
 
-    if not is_instance_valid(water_mesh_instance):
-        water_mesh_instance = MeshInstance3D.new()
-        water_mesh_instance.name = "WaterSurfaceMesh"
-        add_child(water_mesh_instance)
+    var water_mesh_instance_local := _chunk_water_mesh_instance(key)
+    water_mesh_instance_local.material_override = _get_chunk_water_material()
     if water_vertices.is_empty():
-        water_mesh_instance.mesh = null
+        water_mesh_instance_local.mesh = null
     else:
         var water_arrays: Array = []
         water_arrays.resize(Mesh.ARRAY_MAX)
@@ -3606,47 +3709,59 @@ func _rebuild_world_mesh(force: bool = false) -> void:
         water_arrays[Mesh.ARRAY_TEX_UV] = water_uvs
         var water_mesh := ArrayMesh.new()
         water_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, water_arrays)
-        water_mesh_instance.mesh = water_mesh
-        var water_material := ShaderMaterial.new()
-        water_material.shader = WaterSurfaceShader
-        water_mesh_instance.material_override = water_material
+        water_mesh_instance_local.mesh = water_mesh
 
-    var collision_faces := _build_collision_faces()
-    if not is_instance_valid(world_body):
-        var body := StaticBody3D.new()
-        body.name = "VoxelCollision"
-        world_body = body
-        add_child(world_body)
-    var collision_shape := world_body.get_node_or_null("CollisionShape3D") as CollisionShape3D
+    var body := _chunk_collision_body(key)
+    var collision_shape := body.get_node_or_null("CollisionShape3D") as CollisionShape3D
     if not is_instance_valid(collision_shape):
         collision_shape = CollisionShape3D.new()
         collision_shape.name = "CollisionShape3D"
-        world_body.add_child(collision_shape)
+        body.add_child(collision_shape)
+    var collision_faces := _build_chunk_collision_faces(key)
     if collision_faces.size() > 0:
         var concave := ConcavePolygonShape3D.new()
         concave.set_faces(collision_faces)
         collision_shape.shape = concave
     else:
         collision_shape.shape = null
-    mesh_rebuild_cooldown = 0.08
-    last_mesh_rebuild_cells = visible_cells.size()
+    return visible_cells
+
+func _rebuild_world_mesh(force: bool = false) -> void:
+    var rebuild_started_usec: int = Time.get_ticks_usec()
+    if mesh_rebuild_cooldown > 0.0 and not force:
+        mesh_rebuild_deferred = true
+        return
+    mesh_rebuild_count += 1
+    if force or (dirty_chunk_keys.is_empty() and not loaded_chunk_keys.is_empty() and chunk_mesh_instances.is_empty()):
+        for loaded_key_variant in loaded_chunk_keys.keys():
+            dirty_chunk_keys[loaded_key_variant] = true
+    if dirty_chunk_keys.is_empty():
+        last_dirty_chunk_count = 0
+        last_mesh_rebuild_cells = 0
+        last_mesh_rebuild_ms = float(Time.get_ticks_usec() - rebuild_started_usec) / 1000.0
+        max_mesh_rebuild_ms = maxf(max_mesh_rebuild_ms, last_mesh_rebuild_ms)
+        return
+    var rebuild_keys: Array[Vector2i] = []
+    for key_variant in dirty_chunk_keys.keys():
+        var key: Vector2i = key_variant
+        if loaded_chunk_keys.has(key):
+            rebuild_keys.append(key)
+    dirty_chunk_keys.clear()
+    var total_visible_cells := 0
+    for key in rebuild_keys:
+        total_visible_cells += _rebuild_chunk_mesh(key)
+    last_dirty_chunk_count = rebuild_keys.size()
+    dirty_chunk_rebuild_count += rebuild_keys.size()
+    last_mesh_rebuild_cells = total_visible_cells
     last_mesh_rebuild_ms = float(Time.get_ticks_usec() - rebuild_started_usec) / 1000.0
     max_mesh_rebuild_ms = maxf(max_mesh_rebuild_ms, last_mesh_rebuild_ms)
+    mesh_rebuild_cooldown = 0.08
 
 func _build_collision_faces() -> PackedVector3Array:
     var faces := PackedVector3Array()
-    for cell_variant in blocks.keys():
-        var cell: Vector3i = cell_variant
-        for face_index in range(6):
-            if _get_block(cell + _face_offset(face_index)) == AIR:
-                var base := Vector3(cell)
-                var vertices: Array[Vector3] = _face_vertices(face_index)
-                faces.append(base + vertices[0])
-                faces.append(base + vertices[1])
-                faces.append(base + vertices[2])
-                faces.append(base + vertices[0])
-                faces.append(base + vertices[2])
-                faces.append(base + vertices[3])
+    for key_variant in loaded_chunk_keys.keys():
+        var key: Vector2i = key_variant
+        faces.append_array(_build_chunk_collision_faces(key))
     return faces
 
 func _append_face_arrays(vertices_out: PackedVector3Array, normals_out: PackedVector3Array, colors_out: PackedColorArray, uvs_out: PackedVector2Array, cell: Vector3i, block_type: int, face_index: int) -> void:
