@@ -258,6 +258,13 @@ var dimension_label: Label
 var storage_hint_label: Label
 var ranged_hint_label: Label
 var compact_panel: Panel
+var telemetry_button: Button
+var telemetry_panel: Panel
+var telemetry_label: Label
+var telemetry_enabled: bool = false
+var telemetry_update_timer: float = 0.0
+var telemetry_frame_accum: float = 0.0
+var telemetry_frame_samples: int = 0
 var mobile_overlay: Control
 var compact_hp_bar: ProgressBar
 var compact_hunger_bar: ProgressBar
@@ -446,6 +453,13 @@ func _process(delta: float) -> void:
     if hud_tick >= 0.1:
         hud_tick = 0.0
         _update_hud()
+    if telemetry_enabled:
+        telemetry_update_timer += delta
+        telemetry_frame_accum += delta
+        telemetry_frame_samples += 1
+        if telemetry_update_timer >= 0.25:
+            telemetry_update_timer = 0.0
+            _update_telemetry()
 
 func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventMouseButton:
@@ -526,6 +540,8 @@ func _unhandled_input(event: InputEvent) -> void:
         elif event.keycode == KEY_F9:
             _load_world()
             _rebuild_world_mesh()
+        elif event.keycode == KEY_F10:
+            _toggle_telemetry()
 
 func get_hotbar_items() -> Array[int]:
     if world_mode == "Творческий тест" or not is_instance_valid(player) or player.creative_mode:
@@ -1762,6 +1778,68 @@ func _setup_hud() -> void:
         mobile_overlay = MobileOverlayScript.new()
         mobile_overlay.name = "MobileVoxelControls"
         layer.add_child(mobile_overlay)
+    _create_telemetry_overlay(layer)
+
+func _create_telemetry_overlay(layer: CanvasLayer) -> void:
+    var viewport_size := get_viewport().get_visible_rect().size
+    telemetry_panel = Panel.new()
+    telemetry_panel.name = "TelemetryPanel"
+    telemetry_panel.position = Vector2(maxf(12.0, viewport_size.x - 366.0), 58.0)
+    telemetry_panel.size = Vector2(350.0, 136.0)
+    var panel_style := StyleBoxFlat.new()
+    panel_style.bg_color = Color(0.015, 0.025, 0.04, 0.92)
+    panel_style.border_color = Color("65d6a0")
+    panel_style.set_border_width_all(1)
+    telemetry_panel.add_theme_stylebox_override("panel", panel_style)
+    telemetry_panel.visible = false
+    layer.add_child(telemetry_panel)
+
+    telemetry_label = Label.new()
+    telemetry_label.position = Vector2(10.0, 8.0)
+    telemetry_label.size = Vector2(330.0, 120.0)
+    telemetry_label.add_theme_font_size_override("font_size", 14)
+    telemetry_label.add_theme_color_override("font_color", Color("d7f6e7"))
+    telemetry_label.text = "Telemetry: OFF"
+    telemetry_panel.add_child(telemetry_label)
+
+    telemetry_button = Button.new()
+    telemetry_button.name = "TelemetryToggle"
+    telemetry_button.position = Vector2(maxf(12.0, viewport_size.x - 92.0), 16.0)
+    telemetry_button.size = Vector2(76.0, 34.0)
+    telemetry_button.text = "FPS"
+    telemetry_button.add_theme_font_size_override("font_size", 13)
+    telemetry_button.tooltip_text = "Telemetry (F10 on PC)"
+    telemetry_button.visible = OS.has_feature("mobile")
+    telemetry_button.pressed.connect(_toggle_telemetry)
+    layer.add_child(telemetry_button)
+
+func _toggle_telemetry() -> void:
+    telemetry_enabled = not telemetry_enabled
+    telemetry_update_timer = 0.0
+    telemetry_frame_accum = 0.0
+    telemetry_frame_samples = 0
+    if is_instance_valid(telemetry_panel):
+        telemetry_panel.visible = telemetry_enabled
+    if is_instance_valid(telemetry_button):
+        telemetry_button.text = "FPS ON" if telemetry_enabled else "FPS"
+    if telemetry_enabled:
+        _update_telemetry()
+
+func _update_telemetry() -> void:
+    if not is_instance_valid(telemetry_label):
+        return
+    var average_frame_ms := 0.0
+    if telemetry_frame_samples > 0:
+        average_frame_ms = telemetry_frame_accum / float(telemetry_frame_samples) * 1000.0
+    var fps := Engine.get_frames_per_second()
+    telemetry_label.text = "FPS: %d  |  frame: %.2f ms\n" % [fps, average_frame_ms]
+    telemetry_label.text += "rebuild last/max: %.2f / %.2f ms\n" % [last_mesh_rebuild_ms, max_mesh_rebuild_ms]
+    telemetry_label.text += "rebuild calls: %d\n" % mesh_rebuild_count
+    telemetry_label.text += "dirty total/last: %d / %d\n" % [dirty_chunk_rebuild_count, last_dirty_chunk_count]
+    telemetry_label.text += "pending dirty: %d  loaded: %d\n" % [dirty_chunk_keys.size(), loaded_chunk_keys.size()]
+    telemetry_label.text += "visible cells: %d" % last_mesh_rebuild_cells
+    telemetry_frame_accum = 0.0
+    telemetry_frame_samples = 0
 
 func _break_bar_style(color: Color) -> StyleBoxFlat:
     var style := StyleBoxFlat.new()

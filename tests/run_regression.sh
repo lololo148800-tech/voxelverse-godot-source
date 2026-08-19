@@ -43,6 +43,7 @@ run_single res://tests/inventory_invariant.tscn inventory_invariant
 run_single res://tests/phase2_offline_core_smoke.tscn phase2_offline_core
 run_single res://tests/phase3_player_config_smoke.tscn phase3_player_config
 run_single res://tests/water_input_perf_smoke.tscn water_input_perf_smoke
+run_single res://tests/telemetry_overlay_smoke.tscn telemetry_overlay_smoke
 run_single res://tests/block_break_smoke.tscn block_break
 run_single res://tests/combat_smoke.tscn combat_smoke
 run_single res://tests/chunk_stream_smoke.tscn chunk_stream_smoke
