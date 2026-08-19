@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://tests/new_menu_reference_capture.gd" id="1_controller"]
+[ext_resource type="PackedScene" path="res://core/main_menu.tscn" id="2_menu"]
+
+[node name="NewMenuReferenceCapture" type="Node"]
+script = ExtResource("1_controller")
+
+[node name="MainMenu" parent="." instance=ExtResource("2_menu")]

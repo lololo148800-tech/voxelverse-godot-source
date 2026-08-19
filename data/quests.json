@@ -1,0 +1,56 @@
+[
+  {
+    "id": "first_breakthrough",
+    "title": "Первый маршрут",
+    "description": "Добудь первые три блока и подготовься к дальнейшему пути.",
+    "order": 1,
+    "objective": {"type": "blocks_broken", "target": 3},
+    "reward": {"item_id": 13, "count": 2},
+    "hidden_flags": ["route_started"]
+  },
+  {
+    "id": "rift_survey",
+    "title": "Кристальный ориентир",
+    "description": "Найди Кристальный разлом и отметь его в журнале экспедиции.",
+    "order": 2,
+    "objective": {"type": "biome_visit", "target": 1, "biome": "Кристальный разлом"},
+    "reward": {"item_id": 9, "count": 2},
+    "hidden_flags": ["rift_mapped"]
+  },
+  {
+    "id": "echo_survivor",
+    "title": "Не отвечай шёпоту",
+    "description": "Войди в Пустошь Эха и выйди, сохранив маршрут.",
+    "order": 3,
+    "objective": {"type": "biome_visit", "target": 1, "biome": "Пустошь Эха"},
+    "reward": {"item_id": 16, "count": 1},
+    "hidden_flags": ["echo_seen", "horror_log_unlocked"]
+  },
+  {
+    "id": "echo_cleared",
+    "title": "Тишина после боя",
+    "description": "Победи EchoCrawler и очисти первый опасный маршрут.",
+    "order": 4,
+    "objective": {"type": "mob_defeated", "target": 1, "mob_kind": "EchoCrawler"},
+    "reward": {"item_id": 14, "count": 2},
+    "hidden_flags": ["echo_route_cleared"]
+  },
+  {
+    "id": "warden_fall",
+    "title": "Сердце логова",
+    "description": "Победи Эхо-Владыку в его арене и вернись к маяку.",
+    "order": 5,
+    "objective": {"type": "boss_defeated", "target": 1, "boss_kind": "Echo Warden"},
+    "reward": {"item_id": 15, "count": 3},
+    "hidden_flags": ["warden_arena_complete", "beacon_route_open"]
+  },
+  {
+    "id": "astral_chart",
+    "title": "Карта без горизонта",
+    "description": "Поговори с астральным картографом после перехода в Простор.",
+    "order": 6,
+    "objective": {"type": "npc_talk", "target": 1, "npc_id": "astral_cartographer_ves"},
+    "reward": {"item_id": 36, "count": 2},
+    "hidden_flags": ["astral_route_logged"]
+  }
+]

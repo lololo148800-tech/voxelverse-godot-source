@@ -1,0 +1,63 @@
+; Engine configuration file.
+; VoxelVerse 2.0 clean recovery project.
+config_version=5
+
+[application]
+config/name="Пепельный Рубеж · VoxelVerse"
+run/main_scene="res://core/main_menu.tscn"
+config/icon="res://icon.png"
+config/features=PackedStringArray("4.3", "GL Compatibility")
+
+[autoload]
+NetworkSession="*res://core/network_session.gd"
+NetworkAuthority="*res://core/network_authority.gd"
+VoiceChat="*res://core/voice_chat.gd"
+
+[display]
+window/size/viewport_width=1640
+window/size/viewport_height=720
+window/size/window_width_override=1640
+window/size/window_height_override=720
+window/stretch/mode="canvas_items"
+
+[audio]
+driver/enable_input=true
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
+environment/defaults/default_clear_color=Color(0.025, 0.035, 0.07, 1)
+
+[android]
+
+config/texture_formats="s3tc,bptc,astc"
+
+[gui]
+theme/default_font_multichannel_signed_distance_field=true
+
+[editor]
+run/main_run_args=""
+
+[export]
+export_format=4
+
+[preset.0]
+name="Android"
+platform="Android"
+runnable=true
+dedicated_server=false
+custom_features=""
+
+[preset.0.options]
+package/unique_name="com.voxelverse.game"
+package/name="Пепельный Рубеж"
+package/version="2.0.0"
+launcher_icons/main_192x192="res://icon.png"
+launcher_icons/adaptive_foreground_432x432="res://icon.png"
+launcher_icons/adaptive_background_432x432="res://icon.png"
+architectures/arm64-v8a=true
+architectures/armeabi-v7a=true
+architectures/x86=false
+architectures/x86_64=false
+permissions/INTERNET=true

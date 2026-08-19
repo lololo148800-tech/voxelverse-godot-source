@@ -1,0 +1,10 @@
+{
+  "server_name": "Ashen Frontier dedicated",
+  "port": 24560,
+  "max_players": 16,
+  "lan_discovery": true,
+  "online_mode": "friends_or_lan",
+  "voice_chat": "opt_in_only",
+  "world_save": "user://voxelverse_slot_1.json",
+  "authority": "server_validated_blocks_entities_and_player_state"
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "echo_threshold",
+    "trigger": "biome_enter",
+    "biome": "Пустошь Эха",
+    "cooldown": 24.0,
+    "fear": 18.0,
+    "weakness_duration": 4.0,
+    "message": "Пустошь отвечает на твой шаг. Свет держи перед собой.",
+    "pursuit_kind": "WhisperEntity"
+  },
+  {
+    "id": "astral_static",
+    "trigger": "dimension_enter",
+    "dimension": "astral_expanse",
+    "cooldown": 30.0,
+    "fear": 10.0,
+    "weakness_duration": 2.0,
+    "message": "Статический разряд прошёл по скафандру. Дыхание стало тяжелее.",
+    "pursuit_kind": "GuardianDrone"
+  },
+  {
+    "id": "storm_lantern",
+    "trigger": "weather_change",
+    "weather": "magnetic_storm",
+    "cooldown": 20.0,
+    "fear": 8.0,
+    "weakness_duration": 2.5,
+    "message": "Магнитная буря гасит дальние огни. Пережди её у укрытия.",
+    "pursuit_kind": "RiftStalker"
+  },
+  {
+    "id": "whisper_valley_presence",
+    "trigger": "biome_enter",
+    "biome": "Долина Шёпота",
+    "cooldown": 18.0,
+    "fear": 6.0,
+    "weakness_duration": 2.0,
+    "message": "Тихий голос зовёт из тумана. Осмотри следы и держи свет рядом.",
+    "pursuit_kind": "WhisperEntity"
+  }
+]

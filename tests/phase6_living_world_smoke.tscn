@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource path="res://tests/phase6_living_world_smoke.gd" type="Script" id="1_living"]
+[ext_resource path="res://core/voxel_world.tscn" type="PackedScene" id="2_world"]
+
+[node name="Phase6LivingWorldSmoke" type="Node"]
+script = ExtResource("1_living")
+
+[node name="VoxelWorld" parent="." instance=ExtResource("2_world")]

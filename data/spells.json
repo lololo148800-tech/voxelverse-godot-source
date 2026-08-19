@@ -1,0 +1,8 @@
+[
+  {"id":"ember_lance","name":"Эмберное копьё","school":"ember","mana_cost":24,"cooldown":3.0,"effect":"damage_nearest","power":6.0,"status_duration":2.0,"reagent_id":19,"reagent_count":1},
+  {"id":"mending_surge","name":"Волна восстановления","school":"restoration","mana_cost":18,"cooldown":6.0,"effect":"heal_and_focus","power":4.0,"status_duration":8.0,"reagent_id":14,"reagent_count":1},
+  {"id":"rift_step","name":"Шаг разлома","school":"rift","mana_cost":35,"cooldown":10.0,"effect":"blink_forward","power":1.0,"status_duration":1.5,"reagent_id":52,"reagent_count":1},
+  {"id":"frost_ward","name":"Морозный оберег","school":"frost","mana_cost":22,"cooldown":8.0,"effect":"grant_barrier","power":8.0,"status_duration":20.0,"reagent_id":37,"reagent_count":1},
+  {"id":"echo_pulse","name":"Импульс Эха","school":"echo","mana_cost":30,"cooldown":7.0,"effect":"damage_nearest","power":9.0,"status_duration":4.0,"reagent_id":41,"reagent_count":1},
+  {"id":"astral_focus","name":"Астральный фокус","school":"astral","mana_cost":28,"cooldown":12.0,"effect":"heal_and_focus","power":7.0,"status_duration":12.0,"reagent_id":36,"reagent_count":1}
+]

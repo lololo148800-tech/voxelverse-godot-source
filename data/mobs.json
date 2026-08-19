@@ -1,0 +1,4 @@
+[
+  {"id":"CinderMoth","max_health":11.0,"move_speed":2.2,"attack_damage":2.4,"attack_range":1.5,"detection_range":15.0},
+  {"id":"AstralGolem","max_health":44.0,"move_speed":0.7,"attack_damage":7.0,"attack_range":2.2,"detection_range":20.0}
+]

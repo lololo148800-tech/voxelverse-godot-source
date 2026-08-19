@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://tests/combat_smoke.gd" id="1_combat"]
+[ext_resource type="PackedScene" path="res://core/voxel_world.tscn" id="2_world"]
+
+[node name="CombatSmoke" type="Node"]
+script = ExtResource("1_combat")
+
+[node name="VoxelWorld" parent="." instance=ExtResource("2_world")]
+
