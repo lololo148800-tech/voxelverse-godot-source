@@ -47,6 +47,7 @@ run_single res://tests/block_break_smoke.tscn block_break
 run_single res://tests/combat_smoke.tscn combat_smoke
 run_single res://tests/chunk_stream_smoke.tscn chunk_stream_smoke
 run_single res://tests/chunk_dirty_rebuild_smoke.tscn chunk_dirty_rebuild_smoke
+run_single res://tests/chunk_mass_destroy_perf_smoke.tscn chunk_mass_destroy_perf_smoke
 run_single res://tests/structure_content_smoke.tscn structure_content_smoke
 run_single res://tests/network_state_contract.tscn network_state_contract
 run_single res://tests/network_session_contract.tscn network_session_contract
