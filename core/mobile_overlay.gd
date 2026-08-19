@@ -4,6 +4,7 @@ const REFERENCE_WIDTH := 1640.0
 const REFERENCE_HEIGHT := 720.0
 
 var selected_slot: int = 0
+var hotbar_items: Array[int] = []
 var health_ratio: float = 1.0
 var hunger_ratio: float = 1.0
 var _last_draw_size := Vector2.ZERO
@@ -32,6 +33,12 @@ func set_selected_slot(slot_index: int) -> void:
     if selected_slot == next_slot:
         return
     selected_slot = next_slot
+    queue_redraw()
+
+func set_hotbar_items(items: Array[int]) -> void:
+    if hotbar_items == items:
+        return
+    hotbar_items = items.duplicate()
     queue_redraw()
 
 func set_survival_values(current_health: float, max_health: float, current_hunger: float, max_hunger: float) -> void:
@@ -142,13 +149,15 @@ func _draw_hotbar(viewport_size: Vector2, scale_factor: float) -> void:
         draw_rect(rect, Color(0.08, 0.11, 0.09, 0.98), false, 4.0 * scale_factor)
         draw_rect(rect.grow(-6.0 * scale_factor), Color(0.20, 0.28, 0.18, 0.46), true)
         draw_rect(rect.grow(-2.0 * scale_factor), SELECTED if index == selected_slot else Color(0.42, 0.48, 0.42, 0.84), false, 2.0 * scale_factor)
-        _draw_subtle_hotbar_icon(rect, index, scale_factor)
+        if index < hotbar_items.size():
+            _draw_subtle_hotbar_icon(rect, hotbar_items[index], scale_factor)
 
-func _draw_subtle_hotbar_icon(rect: Rect2, index: int, scale_factor: float) -> void:
+func _draw_subtle_hotbar_icon(rect: Rect2, item_id: int, scale_factor: float) -> void:
     var center := rect.get_center()
     var width := 2.4 * scale_factor
     var icon_color := Color(0.78, 0.86, 0.72, 0.84)
-    match index:
+    var icon_kind: int = absi(item_id) % 8
+    match icon_kind:
         0:
             draw_colored_polygon(PackedVector2Array([center + Vector2(-15.0, 12.0) * scale_factor, center + Vector2(-10.0, -7.0) * scale_factor, center + Vector2(12.0, -13.0) * scale_factor, center + Vector2(16.0, 10.0) * scale_factor]), icon_color)
         1:

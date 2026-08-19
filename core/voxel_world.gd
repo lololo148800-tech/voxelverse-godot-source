@@ -447,7 +447,10 @@ func _unhandled_input(event: InputEvent) -> void:
         _end_block_break()
     elif event is InputEventKey and event.pressed and not event.echo:
         if event.keycode >= KEY_1 and event.keycode <= KEY_8:
-            selected_block = hotbar[event.keycode - KEY_1]
+            var available_hotbar := get_hotbar_items()
+            var slot_index: int = event.keycode - KEY_1
+            if slot_index < available_hotbar.size():
+                selected_block = available_hotbar[slot_index]
         elif event.keycode == KEY_Q:
             _begin_block_break()
         elif event.keycode == KEY_X:
@@ -510,6 +513,15 @@ func _unhandled_input(event: InputEvent) -> void:
         elif event.keycode == KEY_F9:
             _load_world()
             _rebuild_world_mesh()
+
+func get_hotbar_items() -> Array[int]:
+    if world_mode == "Творческий тест" or not is_instance_valid(player) or player.creative_mode:
+        return hotbar.duplicate()
+    var owned: Array[int] = []
+    for item_id in hotbar:
+        if int(inventory.get(item_id, 0)) > 0:
+            owned.append(item_id)
+    return owned
 
 func _setup_environment() -> void:
     var environment := Environment.new()
@@ -2501,13 +2513,17 @@ func _update_hud() -> void:
     if is_instance_valid(compact_mana_label):
         compact_mana_label.visible = false
     if is_instance_valid(mobile_overlay):
-        var selected_slot := maxi(0, hotbar.find(selected_block))
+        var available_hotbar: Array[int] = get_hotbar_items()
+        var selected_slot: int = maxi(0, available_hotbar.find(selected_block))
         var health_bucket := int(player.health) if is_instance_valid(player) else -1
         var hunger_bucket := int(player.hunger) if is_instance_valid(player) else -1
-        var overlay_signature := "%d|%d|%d|%s" % [selected_slot, health_bucket, hunger_bucket, modal_open]
+        var hotbar_signature := ",".join(PackedStringArray(available_hotbar.map(func(item_id: int) -> String: return str(item_id))) )
+        var overlay_signature := "%d|%d|%d|%s|%s" % [selected_slot, health_bucket, hunger_bucket, modal_open, hotbar_signature]
         if overlay_signature != _last_overlay_signature:
             mobile_overlay.visible = not modal_open
             mobile_overlay.call("set_selected_slot", selected_slot)
+            if mobile_overlay.has_method("set_hotbar_items"):
+                mobile_overlay.call("set_hotbar_items", available_hotbar)
             if is_instance_valid(player) and mobile_overlay.has_method("set_survival_values"):
                 mobile_overlay.call("set_survival_values", player.health, player.MAX_HEALTH, player.hunger, player.MAX_HUNGER)
             _last_overlay_signature = overlay_signature

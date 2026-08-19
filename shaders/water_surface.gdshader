@@ -1,6 +1,6 @@
 shader_type spatial;
 
-render_mode blend_mix, depth_draw_opaque, cull_disabled, diffuse_burley, specular_schlick_ggx;
+render_mode blend_mix, depth_prepass_alpha, cull_back, diffuse_burley, specular_schlick_ggx;
 
 uniform vec4 water_tint : source_color = vec4(0.10, 0.44, 0.82, 0.68);
 uniform float wave_height : hint_range(0.0, 0.08) = 0.026;
