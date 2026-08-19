@@ -49,6 +49,9 @@ var slowness_timer: float = 0.0
 var spawn_protection_timer: float = 0.0
 var fear_level: float = 0.0
 var fear_timer: float = 0.0
+var movement_input_magnitude: float = 0.0
+var last_horizontal_speed: float = 0.0
+var movement_diagnostic_timer: float = 0.0
 
 func _ready() -> void:
     camera = Camera3D.new()
@@ -59,7 +62,32 @@ func _ready() -> void:
     camera.fov = 72.0
     add_child(camera)
     respawn_position = global_position
+    _ensure_movement_input_actions()
     Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
+func _ensure_movement_input_actions() -> void:
+    var bindings: Dictionary = {
+        "move_left": KEY_A,
+        "move_right": KEY_D,
+        "move_forward": KEY_W,
+        "move_back": KEY_S,
+        "jump": KEY_SPACE
+    }
+    for action_name in bindings.keys():
+        if not InputMap.has_action(action_name):
+            InputMap.add_action(action_name)
+        var bound := false
+        for event in InputMap.action_get_events(action_name):
+            if event is InputEventKey and int(event.physical_keycode) == int(bindings[action_name]):
+                bound = true
+                break
+        if not bound:
+            var key_event := InputEventKey.new()
+            key_event.physical_keycode = bindings[action_name]
+            InputMap.action_add_event(action_name, key_event)
+    for action_name in bindings.keys():
+        if not InputMap.has_action(action_name) or InputMap.action_get_events(action_name).is_empty():
+            push_error("ОТСУТСТВУЕТ input action: " + str(action_name))
 
 func set_avatar_profile(profile: Dictionary) -> void:
     var allowed_styles := ["Разведчик", "Инженер", "Пилигрим"]
@@ -187,16 +215,17 @@ func _physics_process(delta: float) -> void:
         mana = minf(MAX_MANA, mana + delta * (1.5 if creative_mode else 0.7))
 
     var input_vector := Vector2.ZERO
-    if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
+    if Input.is_action_pressed("move_left") or Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
         input_vector.x -= 1.0
-    if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
+    if Input.is_action_pressed("move_right") or Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
         input_vector.x += 1.0
-    if Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_UP):
+    if Input.is_action_pressed("move_forward") or Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_UP):
         input_vector.y -= 1.0
-    if Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN):
+    if Input.is_action_pressed("move_back") or Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN):
         input_vector.y += 1.0
     input_vector += touch_move_vector
     input_vector = input_vector.limit_length(1.0)
+    movement_input_magnitude = input_vector.length()
 
     var forward := -global_transform.basis.z
     var right := global_transform.basis.x
@@ -223,11 +252,16 @@ func _physics_process(delta: float) -> void:
             velocity.y = move_toward(velocity.y, 0.0, GRAVITY * 0.12 * delta)
     elif not is_on_floor():
         velocity.y -= GRAVITY * delta
-    elif Input.is_key_pressed(KEY_SPACE):
+    elif Input.is_action_pressed("jump") or Input.is_key_pressed(KEY_SPACE):
         velocity.y = JUMP_SPEED
     else:
         velocity.y = -0.2
     move_and_slide()
+    last_horizontal_speed = Vector2(velocity.x, velocity.z).length()
+    movement_diagnostic_timer = maxf(0.0, movement_diagnostic_timer - delta)
+    if movement_input_magnitude > 0.2 and last_horizontal_speed < 0.2 and movement_diagnostic_timer <= 0.0:
+        push_warning("VoxelPlayer: input detected but horizontal velocity is near zero; check collision or movement state")
+        movement_diagnostic_timer = 2.0
     if not creative_mode and is_on_floor() and previous_vertical_velocity < -12.0:
         take_damage((absf(previous_vertical_velocity) - 12.0) * 0.35, "Падение")
     _update_survival(delta, input_vector.length())

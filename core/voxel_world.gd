@@ -176,6 +176,9 @@ var mob_simulation_radius: float = 26.0
 var world_mesh_instance: Node3D
 var water_mesh_instance: MeshInstance3D
 var world_body: StaticBody3D
+var last_mesh_rebuild_ms: float = 0.0
+var max_mesh_rebuild_ms: float = 0.0
+var last_mesh_rebuild_cells: int = 0
 var starter_grass_visual_a: MultiMeshInstance3D
 var starter_grass_visual_b: MultiMeshInstance3D
 var target_cell: Vector3i = Vector3i.ZERO
@@ -3515,7 +3518,15 @@ func _place_target() -> void:
     _rebuild_world_mesh()
     _refresh_inventory_panel()
 
+func _should_draw_face(block_type: int, neighbor_type: int) -> bool:
+    if block_type == WATER or block_type == ASH_FLUID:
+        return neighbor_type == AIR
+    if neighbor_type == AIR or neighbor_type == WATER or neighbor_type == ASH_FLUID:
+        return true
+    return false
+
 func _rebuild_world_mesh(force: bool = false) -> void:
+    var rebuild_started_usec: int = Time.get_ticks_usec()
     if mesh_rebuild_cooldown > 0.0 and not force:
         mesh_rebuild_deferred = true
         return
@@ -3525,12 +3536,15 @@ func _rebuild_world_mesh(force: bool = false) -> void:
         var cell: Vector3i = cell_variant
         var exposed := false
         for face_index in range(6):
-            if _get_block(cell + _face_offset(face_index)) == AIR:
+            if _should_draw_face(int(blocks[cell]), _get_block(cell + _face_offset(face_index))):
                 exposed = true
                 break
         if exposed:
             visible_cells.append(cell)
     if visible_cells.is_empty():
+        last_mesh_rebuild_cells = 0
+        last_mesh_rebuild_ms = float(Time.get_ticks_usec() - rebuild_started_usec) / 1000.0
+        max_mesh_rebuild_ms = maxf(max_mesh_rebuild_ms, last_mesh_rebuild_ms)
         return
 
     var vertices := PackedVector3Array()
@@ -3544,7 +3558,7 @@ func _rebuild_world_mesh(force: bool = false) -> void:
     for cell in visible_cells:
         var block_type := int(blocks[cell])
         for face_index in range(6):
-            if _get_block(cell + _face_offset(face_index)) == AIR:
+            if _should_draw_face(block_type, _get_block(cell + _face_offset(face_index))):
                 if block_type == WATER:
                     _append_face_arrays(water_vertices, water_normals, water_colors, water_uvs, cell, block_type, face_index)
                 else:
@@ -3615,6 +3629,9 @@ func _rebuild_world_mesh(force: bool = false) -> void:
     else:
         collision_shape.shape = null
     mesh_rebuild_cooldown = 0.08
+    last_mesh_rebuild_cells = visible_cells.size()
+    last_mesh_rebuild_ms = float(Time.get_ticks_usec() - rebuild_started_usec) / 1000.0
+    max_mesh_rebuild_ms = maxf(max_mesh_rebuild_ms, last_mesh_rebuild_ms)
 
 func _build_collision_faces() -> PackedVector3Array:
     var faces := PackedVector3Array()
