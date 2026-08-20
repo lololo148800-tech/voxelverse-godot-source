@@ -140,13 +140,17 @@ func _unhandled_input(event: InputEvent) -> void:
             var action_surface: bool = event.position.x > viewport_size.x * 0.66 and event.position.y > viewport_size.y * 0.60
             if action_surface:
                 if event.position.x > viewport_size.x * 0.83 and event.position.y < viewport_size.y * 0.80:
+                    VoxelAudio.play_event("ui_click", 0.85)
                     touch_jump()
                 elif event.position.x > viewport_size.x * 0.72 and event.position.y < viewport_size.y * 0.80 and get_parent().has_method("_place_target"):
+                    VoxelAudio.play_event("ui_click", 0.85)
                     get_parent().call("_place_target")
                 elif event.position.x > viewport_size.x * 0.83 and get_parent().has_method("_begin_block_break"):
+                    VoxelAudio.play_event("ui_click", 0.85)
                     break_touch_index = event.index
                     get_parent().call("_begin_block_break")
                 elif get_parent().has_method("_attack_nearby_mob"):
+                    VoxelAudio.play_event("ui_click", 0.85)
                     get_parent().call("_attack_nearby_mob")
             elif event.position.x < viewport_size.x * 0.45 and event.position.y > viewport_size.y * 0.52 and touch_move_index < 0:
                 touch_move_index = event.index

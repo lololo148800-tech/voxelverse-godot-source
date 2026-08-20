@@ -172,6 +172,7 @@ func _physics_process(delta: float) -> void:
             direction = Vector3.ZERO
             if attack_timer <= 0.0 and target.has_method("take_damage"):
                 target.call("take_damage", attack_damage, mob_kind)
+                VoxelAudio.play_event("mob_attack", clampf(attack_damage / 4.0, 0.8, 1.3))
                 attack_timer = ATTACK_COOLDOWN
         State.PURSUIT:
             if mob_kind == "WhisperEntity":
@@ -206,6 +207,7 @@ func take_damage(amount: float, knockback: Vector3 = Vector3.ZERO, critical: boo
     set_meta("last_hit_critical", critical)
     set_meta("last_hit_damage", amount)
     health = maxf(0.0, health - amount)
+    VoxelAudio.play_event("mob_hit", 1.0 if not critical else 1.2)
     if health <= 0.0:
         mob_died.emit(mob_kind, global_position)
         queue_free()

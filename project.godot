@@ -12,6 +12,7 @@ config/features=PackedStringArray("4.3", "GL Compatibility")
 NetworkSession="*res://core/network_session.gd"
 NetworkAuthority="*res://core/network_authority.gd"
 VoiceChat="*res://core/voice_chat.gd"
+VoxelAudio="*res://core/audio_manager.gd"
 
 [display]
 window/size/viewport_width=1640

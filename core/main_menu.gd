@@ -282,6 +282,7 @@ func _reference_home_button(text_value: String) -> Button:
     button.add_theme_stylebox_override("normal", _style(Color(0.90, 0.90, 0.89, 0.96), Color("242529"), 2))
     button.add_theme_stylebox_override("hover", _style(Color("a7db82"), Color("3f9f2f"), 2))
     button.add_theme_stylebox_override("pressed", _style(Color("6ca94e"), Color("1d4c19"), 2))
+    button.pressed.connect(_on_menu_button_pressed)
     return button
 
 func _build_expeditions_page() -> void:
@@ -868,6 +869,7 @@ func _nav_button(text_value: String) -> Button:
     button.add_theme_stylebox_override("normal", _style(Color(0.10, 0.15, 0.13, 0.92), Color("405845"), 1))
     button.add_theme_stylebox_override("hover", _style(Color(0.18, 0.28, 0.21, 0.96), TURQUOISE, 1))
     button.add_theme_stylebox_override("pressed", _style(Color(0.24, 0.34, 0.24, 0.98), TURQUOISE, 1))
+    button.pressed.connect(_on_menu_button_pressed)
     return button
 
 func _primary_button(text_value: String) -> Button:
@@ -877,6 +879,7 @@ func _primary_button(text_value: String) -> Button:
     button.add_theme_font_size_override("font_size", 15)
     button.add_theme_color_override("font_color", Color("fff5e8"))
     button.add_theme_stylebox_override("normal", _style(COPPER, COPPER, 1))
+    button.pressed.connect(_on_menu_button_pressed)
     return button
 
 func _secondary_button(text_value: String) -> Button:
@@ -886,7 +889,11 @@ func _secondary_button(text_value: String) -> Button:
     button.add_theme_font_size_override("font_size", 15)
     button.add_theme_color_override("font_color", TEXT)
     button.add_theme_stylebox_override("normal", _style(PANEL_ALT, Color("52636c"), 1))
+    button.pressed.connect(_on_menu_button_pressed)
     return button
+
+func _on_menu_button_pressed() -> void:
+    VoxelAudio.play_event("ui_click", 0.9)
 
 func _style(background: Color, border: Color, width: int) -> StyleBoxFlat:
     var style := StyleBoxFlat.new()

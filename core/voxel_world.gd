@@ -274,6 +274,13 @@ var telemetry_log_records: int = 0
 var mobile_overlay: Control
 var feedback_audio: AudioStreamPlayer
 var feedback_playback: AudioStreamGeneratorPlayback
+var impact_audio: AudioStreamPlayer
+var death_audio: AudioStreamPlayer
+var impact_feedback_events: int = 0
+var death_feedback_events: int = 0
+var death_feedback_played: bool = false
+var footstep_distance: float = 0.0
+var ambient_bird_timer: float = 8.0
 var feedback_overlay: ColorRect
 var feedback_label: Label
 var feedback_timer: float = 0.0
@@ -355,10 +362,11 @@ var recipes: Array[Dictionary] = [
 
 func _exit_tree() -> void:
     _close_telemetry_log()
-    if is_instance_valid(feedback_audio):
-        feedback_audio.stop()
-        feedback_audio.stream = null
-        feedback_audio.free()
+    for audio_player in [feedback_audio, impact_audio, death_audio]:
+        if is_instance_valid(audio_player):
+            audio_player.stop()
+            audio_player.stream = null
+            audio_player.free()
     feedback_playback = null
 
 func _ready() -> void:
@@ -470,6 +478,7 @@ func _process(delta: float) -> void:
     _update_mob_activation()
     _update_quests()
     _update_boss_arena()
+    _update_audio_ambience(delta)
     feedback_timer = maxf(0.0, feedback_timer - delta)
     if is_instance_valid(feedback_overlay):
         feedback_overlay.color.a = 0.24 * clampf(feedback_timer / 0.32, 0.0, 1.0)
@@ -487,14 +496,32 @@ func _process(delta: float) -> void:
             telemetry_update_timer = 0.0
             _update_telemetry()
 
+func _update_audio_ambience(delta: float) -> void:
+    if not is_instance_valid(player) or player.dead:
+        return
+    var horizontal_velocity := Vector2(player.velocity.x, player.velocity.z).length()
+    if player.is_on_floor() and horizontal_velocity > 0.35:
+        footstep_distance += horizontal_velocity * delta
+        if footstep_distance >= 1.55:
+            footstep_distance = 0.0
+            VoxelAudio.play_event("footstep", 1.0 if not player._is_in_water() else 0.72)
+    else:
+        footstep_distance = minf(footstep_distance, 1.0)
+    ambient_bird_timer -= delta
+    if ambient_bird_timer <= 0.0:
+        ambient_bird_timer = 14.0 + combat_rng.randf_range(0.0, 10.0)
+        VoxelAudio.play_event("bird", 0.8)
+
 func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventMouseButton:
         if event.button_index == MOUSE_BUTTON_LEFT:
             if event.pressed:
+                VoxelAudio.play_event("ui_click", 0.85)
                 _begin_block_break()
             else:
                 _end_block_break()
         elif event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+            VoxelAudio.play_event("ui_click", 0.85)
             _place_target()
     elif event is InputEventKey and not event.pressed and event.keycode == KEY_Q:
         _end_block_break()
@@ -505,16 +532,20 @@ func _unhandled_input(event: InputEvent) -> void:
             if slot_index < available_hotbar.size():
                 selected_block = available_hotbar[slot_index]
         elif event.keycode == KEY_Q:
+            VoxelAudio.play_event("ui_click", 0.85)
             _begin_block_break()
         elif event.keycode == KEY_X:
+            VoxelAudio.play_event("ui_click", 0.85)
             _attack_nearby_mob()
         elif event.keycode == KEY_V:
+            VoxelAudio.play_event("ui_click", 0.85)
             _fire_ranged_tool()
         elif event.keycode == KEY_T:
             _interact_nearby_npc()
         elif event.keycode == KEY_Y:
             _trade_nearby_npc()
         elif event.keycode == KEY_R:
+            VoxelAudio.play_event("ui_click", 0.85)
             _place_target()
         elif event.keycode == KEY_I:
             inventory_open = not inventory_open
@@ -1822,6 +1853,45 @@ func _setup_feedback_audio() -> void:
     feedback_audio.play()
     feedback_playback = feedback_audio.get_stream_playback() as AudioStreamGeneratorPlayback
 
+    impact_audio = AudioStreamPlayer.new()
+    impact_audio.name = "PlayerImpactSound"
+    impact_audio.volume_db = -4.0
+    impact_audio.stream = _build_feedback_wav(false)
+    add_child(impact_audio)
+
+    death_audio = AudioStreamPlayer.new()
+    death_audio.name = "PlayerDeathSound"
+    death_audio.volume_db = -2.0
+    death_audio.stream = _build_feedback_wav(true)
+    add_child(death_audio)
+
+func _build_feedback_wav(is_death: bool) -> AudioStreamWAV:
+    var sample_rate := 22050
+    var duration := 0.62 if is_death else 0.16
+    var sample_count := int(float(sample_rate) * duration)
+    var data := PackedByteArray()
+    data.resize(sample_count * 2)
+    for index in range(sample_count):
+        var t := float(index) / float(sample_rate)
+        var envelope := exp(-7.0 * t) if not is_death else exp(-3.6 * t) * clampf(1.0 - t / duration, 0.0, 1.0)
+        var sample: float
+        if is_death:
+            var sweep := lerpf(260.0, 62.0, clampf(t / duration, 0.0, 1.0))
+            sample = sin(TAU * sweep * t) * 0.52 + sin(TAU * sweep * 0.5 * t) * 0.28
+        else:
+            sample = sin(TAU * 132.0 * t) * 0.58 + sin(TAU * 264.0 * t) * 0.22
+        sample *= envelope
+        var pcm := clampi(int(sample * 30000.0), -32768, 32767)
+        var offset := index * 2
+        data[offset] = pcm & 0xff
+        data[offset + 1] = (pcm >> 8) & 0xff
+    var wav := AudioStreamWAV.new()
+    wav.format = AudioStreamWAV.FORMAT_16_BITS
+    wav.mix_rate = sample_rate
+    wav.stereo = false
+    wav.data = data
+    return wav
+
 func _play_feedback_tone(frequency: float, duration: float, volume: float = 0.16) -> void:
     if not is_instance_valid(feedback_playback):
         return
@@ -1850,11 +1920,17 @@ func _create_feedback_overlay(layer: CanvasLayer) -> void:
     layer.add_child(feedback_label)
 
 func _on_player_damage_taken(amount: float, source: String) -> void:
+    impact_feedback_events += 1
     feedback_timer = 0.32
     if is_instance_valid(feedback_label):
         feedback_label.text = "-%.1f HP%s" % [amount, ("  ·  " + source) if not source.is_empty() else ""]
         feedback_label.visible = true
-    _play_feedback_tone(180.0, 0.08, 0.12)
+    VoxelAudio.play_event("player_hurt", clampf(amount / 4.0, 0.7, 1.3))
+    if is_instance_valid(impact_audio) and impact_audio.stream != null:
+        impact_audio.pitch_scale = clampf(1.0 + amount * 0.018, 0.92, 1.24)
+        impact_audio.play()
+    else:
+        _play_feedback_tone(180.0, 0.08, 0.18)
 
 func _create_telemetry_overlay(layer: CanvasLayer) -> void:
     var viewport_size := get_viewport().get_visible_rect().size
@@ -2989,6 +3065,7 @@ func _update_mob_activation() -> void:
 func _attack_nearby_mob() -> void:
     if not is_instance_valid(player) or player.dead or combat_cooldown > 0.0:
         return
+    VoxelAudio.play_event("weapon_swing", 1.0)
     if NetworkAuthority.is_client_mode():
         var online_target := _find_online_attack_target()
         if online_target.is_empty():
@@ -3041,6 +3118,7 @@ func _apply_mob_weapon_hit(mob: VoxelMob, base_damage: float, attacker_position:
     var impulse := away.normalized() * knockback_force * (1.35 if critical else 1.0)
     impulse.y = 2.8 if critical else 1.7
     mob.take_damage(damage, impulse, critical)
+    VoxelAudio.play_event("mob_hit", 1.2 if critical else 1.0)
     return {"damage": damage, "critical": critical, "defeated": mob.health <= 0.0}
 
 func _apply_boss_weapon_hit(base_damage: float, attacker_position: Vector3, critical_chance: float, knockback_force: float) -> Dictionary:
@@ -3055,6 +3133,7 @@ func _apply_boss_weapon_hit(base_damage: float, attacker_position: Vector3, crit
     var impulse := away.normalized() * knockback_force * (1.2 if critical else 0.8)
     impulse.y = 2.2 if critical else 1.2
     boss.take_damage(damage, impulse, critical)
+    VoxelAudio.play_event("mob_hit", 1.25 if critical else 1.05)
     return {"damage": damage, "critical": critical, "defeated": boss.health <= 0.0}
 
 func _find_online_attack_target() -> Dictionary:
@@ -3427,6 +3506,7 @@ func _begin_block_break() -> void:
     break_progress = 0.0
     break_cell = target_cell
     break_block_type = _get_block(target_cell)
+    VoxelAudio.play_event("block_break_start", 0.9)
     if break_block_type == WATER or break_block_type == ASH_FLUID:
         generated_message = "Жидкость нельзя ломать: войди в воду или используй ёмкость"
         _end_block_break()
@@ -3515,6 +3595,7 @@ func _complete_block_break() -> void:
     _set_runtime_block(break_cell, AIR)
     tool_durability[equipped_tool] = maxi(0, tool_durability[equipped_tool] - 1)
     _drop_block_loot(broken_type, break_cell)
+    VoxelAudio.play_event("block_break", 1.0)
     blocks_broken += 1
     if not achievements["first_block"]:
         achievements["first_block"] = true
@@ -3666,6 +3747,7 @@ func _fire_ranged_tool() -> void:
     projectile.setup(player.get_view_origin() + player.get_view_direction() * 0.8, player.get_view_direction(), self)
     add_child(projectile)
     projectiles.append(projectile)
+    VoxelAudio.play_event("weapon_swing", 1.1)
     generated_message = "Арбалетный болт выпущен"
 
 func _projectile_try_hit(projectile: VoxelProjectile) -> bool:
@@ -3740,6 +3822,7 @@ func _place_target() -> void:
     if selected_block == TRAP:
         traps.append(place_cell)
     _set_runtime_block(place_cell, selected_block)
+    VoxelAudio.play_event("block_place", 1.0)
     _rebuild_world_mesh()
     _refresh_inventory_panel()
 
@@ -4478,18 +4561,27 @@ func _on_player_survival_changed() -> void:
     _update_hud()
 
 func _on_player_died() -> void:
+    if death_feedback_played:
+        return
+    death_feedback_played = true
+    death_feedback_events += 1
     generated_message = "Ты погиб" if not hardcore_mode else "Режим One-Life завершён"
     feedback_timer = 1.1
     if is_instance_valid(feedback_label):
         feedback_label.text = generated_message
         feedback_label.visible = true
-    _play_feedback_tone(120.0, 0.24, 0.18)
+    VoxelAudio.play_event("player_death", 1.2)
+    if is_instance_valid(death_audio) and death_audio.stream != null:
+        death_audio.play()
+    else:
+        _play_feedback_tone(120.0, 0.34, 0.22)
     _update_hud()
 
 func _respawn_player() -> void:
     if not is_instance_valid(player) or player.hardcore:
         return
     player.respawn()
+    death_feedback_played = false
     generated_message = "Возрождение: здоровье восстановлено, сытость снижена"
 
 func _apply_pending_player_state() -> void:
@@ -5634,6 +5726,7 @@ func _spawn_mobs() -> void:
         mobs.append(mob)
 
 func _on_mob_died(kind: String, pos: Vector3) -> void:
+    VoxelAudio.play_event("mob_death", 1.1)
     mobs_defeated += 1
     mob_defeat_counts[kind] = int(mob_defeat_counts.get(kind, 0)) + 1
     if not achievements["first_mob"]:
