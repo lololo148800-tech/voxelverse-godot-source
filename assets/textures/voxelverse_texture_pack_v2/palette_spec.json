@@ -1,0 +1,443 @@
+{
+  "category_palettes": {
+    "earth": [
+      "#3D2B20",
+      "#5B3F2A",
+      "#765331",
+      "#956C3E",
+      "#A98B59",
+      "#293B24"
+    ],
+    "grass": [
+      "#19351F",
+      "#28552B",
+      "#3A7735",
+      "#579447",
+      "#83A94A",
+      "#2B4B2D"
+    ],
+    "stone": [
+      "#2B3034",
+      "#454B50",
+      "#62696C",
+      "#81888A",
+      "#A2A6A2",
+      "#353B40"
+    ],
+    "sand": [
+      "#92734A",
+      "#B29159",
+      "#CBAE6F",
+      "#E0C584",
+      "#F0D79B",
+      "#765B3A"
+    ],
+    "wood": [
+      "#322017",
+      "#4B2D1E",
+      "#684027",
+      "#865633",
+      "#AA7548",
+      "#C29663"
+    ],
+    "leaves": [
+      "#132A1B",
+      "#204B29",
+      "#2E6B34",
+      "#43843B",
+      "#6C9A3E",
+      "#91AD48"
+    ],
+    "building": [
+      "#34383A",
+      "#505457",
+      "#707577",
+      "#969B9A",
+      "#C0BDB1",
+      "#6D3830"
+    ],
+    "metal": [
+      "#3A3E42",
+      "#5A6063",
+      "#7C8486",
+      "#A7AEAB",
+      "#D3D4C9",
+      "#6D4A28"
+    ],
+    "ore": [
+      "#30363A",
+      "#4B5256",
+      "#687074",
+      "#858C8D",
+      "#A9ADA8",
+      "#22272B"
+    ],
+    "crystal": [
+      "#342348",
+      "#593878",
+      "#7A4DA1",
+      "#A26BD0",
+      "#C8A5EA",
+      "#242036"
+    ],
+    "fluid": [
+      "#18394B",
+      "#245B72",
+      "#3F8FA0",
+      "#6AB9BC",
+      "#B45728",
+      "#2E2825"
+    ],
+    "bone": [
+      "#71604C",
+      "#978267",
+      "#B7A282",
+      "#D6C9A9",
+      "#EAE0C4",
+      "#4E4032"
+    ]
+  },
+  "fixed_accents": {
+    "GRASS_TOP": [
+      "#3A7735",
+      "#83A94A"
+    ],
+    "GRASS_SIDE": [
+      "#28552B",
+      "#765331"
+    ],
+    "DIRT": [
+      "#3D2B20",
+      "#956C3E"
+    ],
+    "STONE": [
+      "#2B3034",
+      "#A2A6A2"
+    ],
+    "STONE_MOSSY": [
+      "#2E6B34",
+      "#6C9A3E"
+    ],
+    "GRAVEL": [
+      "#2B3034",
+      "#A2A6A2"
+    ],
+    "SAND": [
+      "#B29159",
+      "#F0D79B"
+    ],
+    "SAND_RED": [
+      "#8D4F35",
+      "#C97B4B"
+    ],
+    "SANDSTONE": [
+      "#B29159",
+      "#F0D79B"
+    ],
+    "CLAY": [
+      "#707577",
+      "#C0BDB1"
+    ],
+    "SNOW": [
+      "#B9D5DE",
+      "#F0F2E8"
+    ],
+    "ICE": [
+      "#3F8FA0",
+      "#B7E0E0"
+    ],
+    "MUD": [
+      "#3D2B20",
+      "#765331"
+    ],
+    "MOSS": [
+      "#2E6B34",
+      "#83A94A"
+    ],
+    "PODZOL": [
+      "#4B2D1E",
+      "#AA7548"
+    ],
+    "LIMESTONE": [
+      "#81888A",
+      "#C0BDB1"
+    ],
+    "GRANITE": [
+      "#7E6264",
+      "#B9A1A2"
+    ],
+    "OBSIDIAN": [
+      "#593878",
+      "#C8A5EA"
+    ],
+    "BASALT": [
+      "#2B3034",
+      "#81888A"
+    ],
+    "MAGMA": [
+      "#7D3020",
+      "#E05A24"
+    ],
+    "COAL_ORE": [
+      "#22272B",
+      "#858C8D"
+    ],
+    "IRON_ORE": [
+      "#A26C43",
+      "#BFA67A"
+    ],
+    "GOLD_ORE": [
+      "#D09F2D",
+      "#F5D05D"
+    ],
+    "COPPER_ORE": [
+      "#C66C3D",
+      "#6E9270"
+    ],
+    "SILVER_ORE": [
+      "#C5C9C5",
+      "#E4E3D5"
+    ],
+    "DIAMOND_ORE": [
+      "#59B3C2",
+      "#BDECF0"
+    ],
+    "EMERALD_ORE": [
+      "#399968",
+      "#8DE0A8"
+    ],
+    "RUBY_ORE": [
+      "#B63D46",
+      "#F07A63"
+    ],
+    "SAPPHIRE_ORE": [
+      "#3E69BB",
+      "#8FB5F2"
+    ],
+    "CRYSTAL_CLUSTER": [
+      "#7A4DA1",
+      "#C8A5EA"
+    ],
+    "GLOWSTONE": [
+      "#D39B33",
+      "#F4D46A"
+    ],
+    "QUARTZ": [
+      "#D6C9A9",
+      "#F5F1DC"
+    ],
+    "AMETHYST": [
+      "#7A4DA1",
+      "#C8A5EA"
+    ],
+    "LAPIS_ORE": [
+      "#315CA3",
+      "#6E9FE8"
+    ],
+    "NETHERITE_ORE": [
+      "#22272B",
+      "#D1A33A"
+    ],
+    "OAK_LOG_SIDE": [
+      "#4B2D1E",
+      "#AA7548"
+    ],
+    "OAK_LOG_TOP": [
+      "#684027",
+      "#C29663"
+    ],
+    "OAK_PLANKS": [
+      "#684027",
+      "#C29663"
+    ],
+    "OAK_LEAVES": [
+      "#2E6B34",
+      "#6C9A3E"
+    ],
+    "BIRCH_LOG_SIDE": [
+      "#C8C6B4",
+      "#3A3530"
+    ],
+    "BIRCH_LOG_TOP": [
+      "#D8D2B8",
+      "#8A7A5E"
+    ],
+    "BIRCH_PLANKS": [
+      "#C29663",
+      "#E1C78A"
+    ],
+    "BIRCH_LEAVES": [
+      "#43843B",
+      "#91AD48"
+    ],
+    "SPRUCE_LOG_SIDE": [
+      "#322017",
+      "#684027"
+    ],
+    "SPRUCE_PLANKS": [
+      "#4B2D1E",
+      "#865633"
+    ],
+    "SPRUCE_LEAVES": [
+      "#204B29",
+      "#43843B"
+    ],
+    "DARK_OAK_LOG_SIDE": [
+      "#1E1612",
+      "#4B2D1E"
+    ],
+    "DARK_OAK_PLANKS": [
+      "#5A2630",
+      "#8F3B42"
+    ],
+    "DARK_OAK_LEAVES": [
+      "#132A1B",
+      "#2E6B34"
+    ],
+    "ACACIA_LOG_SIDE": [
+      "#7E5B4B",
+      "#D0824B"
+    ],
+    "ACACIA_PLANKS": [
+      "#A8572D",
+      "#D58A4A"
+    ],
+    "ACACIA_LEAVES": [
+      "#6A8437",
+      "#B2B64A"
+    ],
+    "JUNGLE_LOG_SIDE": [
+      "#643A2D",
+      "#A66345"
+    ],
+    "JUNGLE_PLANKS": [
+      "#684027",
+      "#A66345"
+    ],
+    "JUNGLE_LEAVES": [
+      "#1D4C2C",
+      "#4D873C"
+    ],
+    "COBBLESTONE": [
+      "#454B50",
+      "#A2A6A2"
+    ],
+    "STONE_BRICKS": [
+      "#62696C",
+      "#A2A6A2"
+    ],
+    "STONE_BRICKS_CRACKED": [
+      "#62696C",
+      "#A2A6A2"
+    ],
+    "RED_BRICKS": [
+      "#873D35",
+      "#C16A4E"
+    ],
+    "MOSSY_STONE_BRICKS": [
+      "#3A6D43",
+      "#878E76"
+    ],
+    "POLISHED_STONE": [
+      "#81888A",
+      "#C0C4BD"
+    ],
+    "MARBLE": [
+      "#C0BDB1",
+      "#F0EEE2"
+    ],
+    "CONCRETE_WHITE": [
+      "#C0BDB1",
+      "#F0EEE2"
+    ],
+    "CONCRETE_GRAY": [
+      "#505457",
+      "#969B9A"
+    ],
+    "CONCRETE_BLACK": [
+      "#34383A",
+      "#707577"
+    ],
+    "TERRACOTTA": [
+      "#A8572D",
+      "#CE8250"
+    ],
+    "GLASS": [
+      "#3F8FA0",
+      "#C5EFF0"
+    ],
+    "GLASS_TINTED": [
+      "#2B3034",
+      "#6D8389"
+    ],
+    "IRON_BLOCK": [
+      "#A7AEAB",
+      "#D3D4C9"
+    ],
+    "GOLD_BLOCK": [
+      "#D09F2D",
+      "#F5D05D"
+    ],
+    "COPPER_BLOCK": [
+      "#B86239",
+      "#6E9270"
+    ],
+    "DIAMOND_BLOCK": [
+      "#78CED1",
+      "#E0FFFF"
+    ],
+    "NETHERITE_BLOCK": [
+      "#34383A",
+      "#D1A33A"
+    ],
+    "HAY_BALE_SIDE": [
+      "#CBAE6F",
+      "#F0D79B"
+    ],
+    "HAY_BALE_TOP": [
+      "#B29159",
+      "#E0C584"
+    ],
+    "WATER_STILL": [
+      "#245B72",
+      "#6AB9BC"
+    ],
+    "LAVA_STILL": [
+      "#B64C23",
+      "#F08A27"
+    ],
+    "SLIME": [
+      "#3E8E46",
+      "#A9D94C"
+    ],
+    "HONEY": [
+      "#C78625",
+      "#F2C24F"
+    ],
+    "MUSHROOM_RED_CAP": [
+      "#A83E3A",
+      "#F0E1C1"
+    ],
+    "MUSHROOM_BROWN_CAP": [
+      "#684027",
+      "#B18B67"
+    ],
+    "CACTUS_SIDE": [
+      "#2E6B34",
+      "#91AD48"
+    ],
+    "BONE_BLOCK": [
+      "#B7A282",
+      "#EAE0C4"
+    ],
+    "COBWEB": [
+      "#81888A",
+      "#D1D2C8"
+    ],
+    "BOOKSHELF": [
+      "#4B2D1E",
+      "#AA7548"
+    ]
+  },
+  "notes": "Six-entry palettes with deterministic HSV variation; wool uses one fixed pattern recolored across all 15 variants."
+}

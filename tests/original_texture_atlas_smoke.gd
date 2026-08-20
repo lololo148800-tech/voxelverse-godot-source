@@ -4,7 +4,7 @@ func _ready() -> void:
     var atlas := load("res://assets/textures/voxel_atlas.png") as Texture2D
     var atlas_ok: bool = is_instance_valid(atlas) and atlas.get_width() == 256 and atlas.get_height() == 256
     var source_count := 0
-    var source_dir := DirAccess.open("res://assets/textures/original_voxel_blocks_4views")
+    var source_dir := DirAccess.open("res://assets/textures/voxelverse_texture_pack_v2/textures")
     if source_dir != null:
         source_dir.list_dir_begin()
         while true:
@@ -14,7 +14,7 @@ func _ready() -> void:
             if not source_dir.current_is_dir() and entry.to_lower().ends_with(".png"):
                 source_count += 1
         source_dir.list_dir_end()
-    var source_ok: bool = source_count == 200
+    var source_ok: bool = source_count == 100
     var world := get_node_or_null("VoxelWorld")
     var mapping_ok := false
     if world != null:
@@ -28,6 +28,6 @@ func _ready() -> void:
         print("ORIGINAL_TEXTURE_ATLAS_FAIL atlas=%s sources=%d mapping=%s" % [atlas_ok, source_count, mapping_ok])
         get_tree().quit(1)
         return
-    print("ORIGINAL_TEXTURE_ATLAS_PASS atlas=256x256 sources=200 mapping_bounds=true")
+    print("ORIGINAL_TEXTURE_ATLAS_PASS atlas=256x256 v2_tiles=100 mapping_bounds=true")
     get_tree().quit(0)
 

@@ -22,10 +22,12 @@ if "action_surface" not in player_text or "touch_jump" not in player_text:
     raise SystemExit("VISUAL_ASSET_FAIL mobile_actions")
 if not (ROOT / "core/mobile_overlay.gd").is_file():
     raise SystemExit("VISUAL_ASSET_FAIL missing_mobile_overlay")
-source_dir = ROOT / "assets/textures/original_voxel_blocks_4views"
+source_dir = ROOT / "assets/textures/voxelverse_texture_pack_v2/textures"
 source_count = len(list(source_dir.glob("*.png"))) if source_dir.is_dir() else 0
-if source_count != 200:
-    raise SystemExit(f"VISUAL_ASSET_FAIL source_textures={source_count}")
+if source_count != 100:
+    raise SystemExit(f"VISUAL_ASSET_FAIL v2_textures={source_count}")
+if not (ROOT / "assets/textures/voxelverse_texture_pack_v2/atlas_map.json").is_file():
+    raise SystemExit("VISUAL_ASSET_FAIL missing_v2_atlas_map")
 if SURFACE_SHADER.read_text(encoding="utf-8").count("shader_type sky;") != 1:
     raise SystemExit("VISUAL_ASSET_FAIL surface_shader")
-print("VISUAL_ASSET_PASS atlas=256x256 sources=200 uv_mapping=true surface_sky=true guide_scroll=true compact_hud=true textless_gameplay_hud=true mobile_overlay=true mobile_actions=true starter_clearing=true echo_copy=true legacy_text_wall_hidden=true")
+print("VISUAL_ASSET_PASS atlas=256x256 v2_tiles=100 uv_mapping=true surface_sky=true guide_scroll=true compact_hud=true textless_gameplay_hud=true mobile_overlay=true mobile_actions=true starter_clearing=true echo_copy=true legacy_text_wall_hidden=true")
