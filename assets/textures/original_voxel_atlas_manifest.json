@@ -1,0 +1,1209 @@
+{
+  "source_count": 200,
+  "tile_size": 16,
+  "columns": 16,
+  "rows": 16,
+  "crop": "top_left_cube_view_alpha_bbox",
+  "tiles": [
+    {
+      "source_id": 1,
+      "source_file": "001_dirt.png",
+      "tile_x": 0,
+      "tile_y": 0
+    },
+    {
+      "source_id": 2,
+      "source_file": "002_coarse_dirt.png",
+      "tile_x": 1,
+      "tile_y": 0
+    },
+    {
+      "source_id": 3,
+      "source_file": "003_rooted_dirt.png",
+      "tile_x": 2,
+      "tile_y": 0
+    },
+    {
+      "source_id": 4,
+      "source_file": "004_grass_block_top.png",
+      "tile_x": 3,
+      "tile_y": 0
+    },
+    {
+      "source_id": 5,
+      "source_file": "005_grass_block_side.png",
+      "tile_x": 4,
+      "tile_y": 0
+    },
+    {
+      "source_id": 6,
+      "source_file": "006_podzol.png",
+      "tile_x": 5,
+      "tile_y": 0
+    },
+    {
+      "source_id": 7,
+      "source_file": "007_mycelium.png",
+      "tile_x": 6,
+      "tile_y": 0
+    },
+    {
+      "source_id": 8,
+      "source_file": "008_moss_block.png",
+      "tile_x": 7,
+      "tile_y": 0
+    },
+    {
+      "source_id": 9,
+      "source_file": "009_mud.png",
+      "tile_x": 8,
+      "tile_y": 0
+    },
+    {
+      "source_id": 10,
+      "source_file": "010_muddy_mangrove_roots.png",
+      "tile_x": 9,
+      "tile_y": 0
+    },
+    {
+      "source_id": 11,
+      "source_file": "011_stone.png",
+      "tile_x": 10,
+      "tile_y": 0
+    },
+    {
+      "source_id": 12,
+      "source_file": "012_cobblestone.png",
+      "tile_x": 11,
+      "tile_y": 0
+    },
+    {
+      "source_id": 13,
+      "source_file": "013_mossy_cobblestone.png",
+      "tile_x": 12,
+      "tile_y": 0
+    },
+    {
+      "source_id": 14,
+      "source_file": "014_stone_bricks.png",
+      "tile_x": 13,
+      "tile_y": 0
+    },
+    {
+      "source_id": 15,
+      "source_file": "015_mossy_stone_bricks.png",
+      "tile_x": 14,
+      "tile_y": 0
+    },
+    {
+      "source_id": 16,
+      "source_file": "016_cracked_stone_bricks.png",
+      "tile_x": 15,
+      "tile_y": 0
+    },
+    {
+      "source_id": 17,
+      "source_file": "017_chiseled_stone_bricks.png",
+      "tile_x": 0,
+      "tile_y": 1
+    },
+    {
+      "source_id": 18,
+      "source_file": "018_smooth_stone.png",
+      "tile_x": 1,
+      "tile_y": 1
+    },
+    {
+      "source_id": 19,
+      "source_file": "019_andesite.png",
+      "tile_x": 2,
+      "tile_y": 1
+    },
+    {
+      "source_id": 20,
+      "source_file": "020_polished_andesite.png",
+      "tile_x": 3,
+      "tile_y": 1
+    },
+    {
+      "source_id": 21,
+      "source_file": "021_diorite.png",
+      "tile_x": 4,
+      "tile_y": 1
+    },
+    {
+      "source_id": 22,
+      "source_file": "022_polished_diorite.png",
+      "tile_x": 5,
+      "tile_y": 1
+    },
+    {
+      "source_id": 23,
+      "source_file": "023_granite.png",
+      "tile_x": 6,
+      "tile_y": 1
+    },
+    {
+      "source_id": 24,
+      "source_file": "024_polished_granite.png",
+      "tile_x": 7,
+      "tile_y": 1
+    },
+    {
+      "source_id": 25,
+      "source_file": "025_deepslate.png",
+      "tile_x": 8,
+      "tile_y": 1
+    },
+    {
+      "source_id": 26,
+      "source_file": "026_cobbled_deepslate.png",
+      "tile_x": 9,
+      "tile_y": 1
+    },
+    {
+      "source_id": 27,
+      "source_file": "027_polished_deepslate.png",
+      "tile_x": 10,
+      "tile_y": 1
+    },
+    {
+      "source_id": 28,
+      "source_file": "028_deepslate_bricks.png",
+      "tile_x": 11,
+      "tile_y": 1
+    },
+    {
+      "source_id": 29,
+      "source_file": "029_cracked_deepslate_bricks.png",
+      "tile_x": 12,
+      "tile_y": 1
+    },
+    {
+      "source_id": 30,
+      "source_file": "030_deepslate_tiles.png",
+      "tile_x": 13,
+      "tile_y": 1
+    },
+    {
+      "source_id": 31,
+      "source_file": "031_chiseled_deepslate.png",
+      "tile_x": 14,
+      "tile_y": 1
+    },
+    {
+      "source_id": 32,
+      "source_file": "032_tuff.png",
+      "tile_x": 15,
+      "tile_y": 1
+    },
+    {
+      "source_id": 33,
+      "source_file": "033_polished_tuff.png",
+      "tile_x": 0,
+      "tile_y": 2
+    },
+    {
+      "source_id": 34,
+      "source_file": "034_tuff_bricks.png",
+      "tile_x": 1,
+      "tile_y": 2
+    },
+    {
+      "source_id": 35,
+      "source_file": "035_calcite.png",
+      "tile_x": 2,
+      "tile_y": 2
+    },
+    {
+      "source_id": 36,
+      "source_file": "036_dripstone_block.png",
+      "tile_x": 3,
+      "tile_y": 2
+    },
+    {
+      "source_id": 37,
+      "source_file": "037_pointed_dripstone.png",
+      "tile_x": 4,
+      "tile_y": 2
+    },
+    {
+      "source_id": 38,
+      "source_file": "038_sand.png",
+      "tile_x": 5,
+      "tile_y": 2
+    },
+    {
+      "source_id": 39,
+      "source_file": "039_red_sand.png",
+      "tile_x": 6,
+      "tile_y": 2
+    },
+    {
+      "source_id": 40,
+      "source_file": "040_sandstone.png",
+      "tile_x": 7,
+      "tile_y": 2
+    },
+    {
+      "source_id": 41,
+      "source_file": "041_smooth_sandstone.png",
+      "tile_x": 8,
+      "tile_y": 2
+    },
+    {
+      "source_id": 42,
+      "source_file": "042_cut_sandstone.png",
+      "tile_x": 9,
+      "tile_y": 2
+    },
+    {
+      "source_id": 43,
+      "source_file": "043_chiseled_sandstone.png",
+      "tile_x": 10,
+      "tile_y": 2
+    },
+    {
+      "source_id": 44,
+      "source_file": "044_red_sandstone.png",
+      "tile_x": 11,
+      "tile_y": 2
+    },
+    {
+      "source_id": 45,
+      "source_file": "045_smooth_red_sandstone.png",
+      "tile_x": 12,
+      "tile_y": 2
+    },
+    {
+      "source_id": 46,
+      "source_file": "046_cut_red_sandstone.png",
+      "tile_x": 13,
+      "tile_y": 2
+    },
+    {
+      "source_id": 47,
+      "source_file": "047_chiseled_red_sandstone.png",
+      "tile_x": 14,
+      "tile_y": 2
+    },
+    {
+      "source_id": 48,
+      "source_file": "048_gravel.png",
+      "tile_x": 15,
+      "tile_y": 2
+    },
+    {
+      "source_id": 49,
+      "source_file": "049_clay.png",
+      "tile_x": 0,
+      "tile_y": 3
+    },
+    {
+      "source_id": 50,
+      "source_file": "050_terracotta.png",
+      "tile_x": 1,
+      "tile_y": 3
+    },
+    {
+      "source_id": 51,
+      "source_file": "051_white_terracotta.png",
+      "tile_x": 2,
+      "tile_y": 3
+    },
+    {
+      "source_id": 52,
+      "source_file": "052_orange_terracotta.png",
+      "tile_x": 3,
+      "tile_y": 3
+    },
+    {
+      "source_id": 53,
+      "source_file": "053_magenta_terracotta.png",
+      "tile_x": 4,
+      "tile_y": 3
+    },
+    {
+      "source_id": 54,
+      "source_file": "054_light_blue_terracotta.png",
+      "tile_x": 5,
+      "tile_y": 3
+    },
+    {
+      "source_id": 55,
+      "source_file": "055_yellow_terracotta.png",
+      "tile_x": 6,
+      "tile_y": 3
+    },
+    {
+      "source_id": 56,
+      "source_file": "056_lime_terracotta.png",
+      "tile_x": 7,
+      "tile_y": 3
+    },
+    {
+      "source_id": 57,
+      "source_file": "057_pink_terracotta.png",
+      "tile_x": 8,
+      "tile_y": 3
+    },
+    {
+      "source_id": 58,
+      "source_file": "058_gray_terracotta.png",
+      "tile_x": 9,
+      "tile_y": 3
+    },
+    {
+      "source_id": 59,
+      "source_file": "059_light_gray_terracotta.png",
+      "tile_x": 10,
+      "tile_y": 3
+    },
+    {
+      "source_id": 60,
+      "source_file": "060_cyan_terracotta.png",
+      "tile_x": 11,
+      "tile_y": 3
+    },
+    {
+      "source_id": 61,
+      "source_file": "061_purple_terracotta.png",
+      "tile_x": 12,
+      "tile_y": 3
+    },
+    {
+      "source_id": 62,
+      "source_file": "062_blue_terracotta.png",
+      "tile_x": 13,
+      "tile_y": 3
+    },
+    {
+      "source_id": 63,
+      "source_file": "063_brown_terracotta.png",
+      "tile_x": 14,
+      "tile_y": 3
+    },
+    {
+      "source_id": 64,
+      "source_file": "064_green_terracotta.png",
+      "tile_x": 15,
+      "tile_y": 3
+    },
+    {
+      "source_id": 65,
+      "source_file": "065_red_terracotta.png",
+      "tile_x": 0,
+      "tile_y": 4
+    },
+    {
+      "source_id": 66,
+      "source_file": "066_black_terracotta.png",
+      "tile_x": 1,
+      "tile_y": 4
+    },
+    {
+      "source_id": 67,
+      "source_file": "067_oak_log.png",
+      "tile_x": 2,
+      "tile_y": 4
+    },
+    {
+      "source_id": 68,
+      "source_file": "068_oak_planks.png",
+      "tile_x": 3,
+      "tile_y": 4
+    },
+    {
+      "source_id": 69,
+      "source_file": "069_stripped_oak_log.png",
+      "tile_x": 4,
+      "tile_y": 4
+    },
+    {
+      "source_id": 70,
+      "source_file": "070_birch_log.png",
+      "tile_x": 5,
+      "tile_y": 4
+    },
+    {
+      "source_id": 71,
+      "source_file": "071_birch_planks.png",
+      "tile_x": 6,
+      "tile_y": 4
+    },
+    {
+      "source_id": 72,
+      "source_file": "072_stripped_birch_log.png",
+      "tile_x": 7,
+      "tile_y": 4
+    },
+    {
+      "source_id": 73,
+      "source_file": "073_spruce_log.png",
+      "tile_x": 8,
+      "tile_y": 4
+    },
+    {
+      "source_id": 74,
+      "source_file": "074_spruce_planks.png",
+      "tile_x": 9,
+      "tile_y": 4
+    },
+    {
+      "source_id": 75,
+      "source_file": "075_stripped_spruce_log.png",
+      "tile_x": 10,
+      "tile_y": 4
+    },
+    {
+      "source_id": 76,
+      "source_file": "076_jungle_log.png",
+      "tile_x": 11,
+      "tile_y": 4
+    },
+    {
+      "source_id": 77,
+      "source_file": "077_jungle_planks.png",
+      "tile_x": 12,
+      "tile_y": 4
+    },
+    {
+      "source_id": 78,
+      "source_file": "078_stripped_jungle_log.png",
+      "tile_x": 13,
+      "tile_y": 4
+    },
+    {
+      "source_id": 79,
+      "source_file": "079_acacia_log.png",
+      "tile_x": 14,
+      "tile_y": 4
+    },
+    {
+      "source_id": 80,
+      "source_file": "080_acacia_planks.png",
+      "tile_x": 15,
+      "tile_y": 4
+    },
+    {
+      "source_id": 81,
+      "source_file": "081_stripped_acacia_log.png",
+      "tile_x": 0,
+      "tile_y": 5
+    },
+    {
+      "source_id": 82,
+      "source_file": "082_dark_oak_log.png",
+      "tile_x": 1,
+      "tile_y": 5
+    },
+    {
+      "source_id": 83,
+      "source_file": "083_dark_oak_planks.png",
+      "tile_x": 2,
+      "tile_y": 5
+    },
+    {
+      "source_id": 84,
+      "source_file": "084_stripped_dark_oak_log.png",
+      "tile_x": 3,
+      "tile_y": 5
+    },
+    {
+      "source_id": 85,
+      "source_file": "085_mangrove_log.png",
+      "tile_x": 4,
+      "tile_y": 5
+    },
+    {
+      "source_id": 86,
+      "source_file": "086_mangrove_planks.png",
+      "tile_x": 5,
+      "tile_y": 5
+    },
+    {
+      "source_id": 87,
+      "source_file": "087_stripped_mangrove_log.png",
+      "tile_x": 6,
+      "tile_y": 5
+    },
+    {
+      "source_id": 88,
+      "source_file": "088_cherry_log.png",
+      "tile_x": 7,
+      "tile_y": 5
+    },
+    {
+      "source_id": 89,
+      "source_file": "089_cherry_planks.png",
+      "tile_x": 8,
+      "tile_y": 5
+    },
+    {
+      "source_id": 90,
+      "source_file": "090_stripped_cherry_log.png",
+      "tile_x": 9,
+      "tile_y": 5
+    },
+    {
+      "source_id": 91,
+      "source_file": "091_bamboo_block.png",
+      "tile_x": 10,
+      "tile_y": 5
+    },
+    {
+      "source_id": 92,
+      "source_file": "092_stripped_bamboo_block.png",
+      "tile_x": 11,
+      "tile_y": 5
+    },
+    {
+      "source_id": 93,
+      "source_file": "093_bamboo_planks.png",
+      "tile_x": 12,
+      "tile_y": 5
+    },
+    {
+      "source_id": 94,
+      "source_file": "094_crimson_stem.png",
+      "tile_x": 13,
+      "tile_y": 5
+    },
+    {
+      "source_id": 95,
+      "source_file": "095_crimson_planks.png",
+      "tile_x": 14,
+      "tile_y": 5
+    },
+    {
+      "source_id": 96,
+      "source_file": "096_stripped_crimson_stem.png",
+      "tile_x": 15,
+      "tile_y": 5
+    },
+    {
+      "source_id": 97,
+      "source_file": "097_warped_stem.png",
+      "tile_x": 0,
+      "tile_y": 6
+    },
+    {
+      "source_id": 98,
+      "source_file": "098_warped_planks.png",
+      "tile_x": 1,
+      "tile_y": 6
+    },
+    {
+      "source_id": 99,
+      "source_file": "099_stripped_warped_stem.png",
+      "tile_x": 2,
+      "tile_y": 6
+    },
+    {
+      "source_id": 100,
+      "source_file": "100_nether_wart_block.png",
+      "tile_x": 3,
+      "tile_y": 6
+    },
+    {
+      "source_id": 101,
+      "source_file": "101_warped_wart_block.png",
+      "tile_x": 4,
+      "tile_y": 6
+    },
+    {
+      "source_id": 102,
+      "source_file": "102_shroomlight.png",
+      "tile_x": 5,
+      "tile_y": 6
+    },
+    {
+      "source_id": 103,
+      "source_file": "103_netherrack.png",
+      "tile_x": 6,
+      "tile_y": 6
+    },
+    {
+      "source_id": 104,
+      "source_file": "104_nylium_crimson.png",
+      "tile_x": 7,
+      "tile_y": 6
+    },
+    {
+      "source_id": 105,
+      "source_file": "105_nylium_warped.png",
+      "tile_x": 8,
+      "tile_y": 6
+    },
+    {
+      "source_id": 106,
+      "source_file": "106_soul_sand.png",
+      "tile_x": 9,
+      "tile_y": 6
+    },
+    {
+      "source_id": 107,
+      "source_file": "107_soul_soil.png",
+      "tile_x": 10,
+      "tile_y": 6
+    },
+    {
+      "source_id": 108,
+      "source_file": "108_glowstone.png",
+      "tile_x": 11,
+      "tile_y": 6
+    },
+    {
+      "source_id": 109,
+      "source_file": "109_magma_block.png",
+      "tile_x": 12,
+      "tile_y": 6
+    },
+    {
+      "source_id": 110,
+      "source_file": "110_blackstone.png",
+      "tile_x": 13,
+      "tile_y": 6
+    },
+    {
+      "source_id": 111,
+      "source_file": "111_polished_blackstone.png",
+      "tile_x": 14,
+      "tile_y": 6
+    },
+    {
+      "source_id": 112,
+      "source_file": "112_polished_blackstone_bricks.png",
+      "tile_x": 15,
+      "tile_y": 6
+    },
+    {
+      "source_id": 113,
+      "source_file": "113_cracked_polished_blackstone_bricks.png",
+      "tile_x": 0,
+      "tile_y": 7
+    },
+    {
+      "source_id": 114,
+      "source_file": "114_chiseled_polished_blackstone.png",
+      "tile_x": 1,
+      "tile_y": 7
+    },
+    {
+      "source_id": 115,
+      "source_file": "115_gilded_blackstone.png",
+      "tile_x": 2,
+      "tile_y": 7
+    },
+    {
+      "source_id": 116,
+      "source_file": "116_basalt.png",
+      "tile_x": 3,
+      "tile_y": 7
+    },
+    {
+      "source_id": 117,
+      "source_file": "117_smooth_basalt.png",
+      "tile_x": 4,
+      "tile_y": 7
+    },
+    {
+      "source_id": 118,
+      "source_file": "118_polished_basalt.png",
+      "tile_x": 5,
+      "tile_y": 7
+    },
+    {
+      "source_id": 119,
+      "source_file": "119_nether_bricks.png",
+      "tile_x": 6,
+      "tile_y": 7
+    },
+    {
+      "source_id": 120,
+      "source_file": "120_cracked_nether_bricks.png",
+      "tile_x": 7,
+      "tile_y": 7
+    },
+    {
+      "source_id": 121,
+      "source_file": "121_chiseled_nether_bricks.png",
+      "tile_x": 8,
+      "tile_y": 7
+    },
+    {
+      "source_id": 122,
+      "source_file": "122_red_nether_bricks.png",
+      "tile_x": 9,
+      "tile_y": 7
+    },
+    {
+      "source_id": 123,
+      "source_file": "123_obsidian.png",
+      "tile_x": 10,
+      "tile_y": 7
+    },
+    {
+      "source_id": 124,
+      "source_file": "124_crying_obsidian.png",
+      "tile_x": 11,
+      "tile_y": 7
+    },
+    {
+      "source_id": 125,
+      "source_file": "125_ancient_debris.png",
+      "tile_x": 12,
+      "tile_y": 7
+    },
+    {
+      "source_id": 126,
+      "source_file": "126_raw_iron_block.png",
+      "tile_x": 13,
+      "tile_y": 7
+    },
+    {
+      "source_id": 127,
+      "source_file": "127_raw_copper_block.png",
+      "tile_x": 14,
+      "tile_y": 7
+    },
+    {
+      "source_id": 128,
+      "source_file": "128_raw_gold_block.png",
+      "tile_x": 15,
+      "tile_y": 7
+    },
+    {
+      "source_id": 129,
+      "source_file": "129_coal_ore.png",
+      "tile_x": 0,
+      "tile_y": 8
+    },
+    {
+      "source_id": 130,
+      "source_file": "130_deepslate_coal_ore.png",
+      "tile_x": 1,
+      "tile_y": 8
+    },
+    {
+      "source_id": 131,
+      "source_file": "131_iron_ore.png",
+      "tile_x": 2,
+      "tile_y": 8
+    },
+    {
+      "source_id": 132,
+      "source_file": "132_deepslate_iron_ore.png",
+      "tile_x": 3,
+      "tile_y": 8
+    },
+    {
+      "source_id": 133,
+      "source_file": "133_copper_ore.png",
+      "tile_x": 4,
+      "tile_y": 8
+    },
+    {
+      "source_id": 134,
+      "source_file": "134_deepslate_copper_ore.png",
+      "tile_x": 5,
+      "tile_y": 8
+    },
+    {
+      "source_id": 135,
+      "source_file": "135_gold_ore.png",
+      "tile_x": 6,
+      "tile_y": 8
+    },
+    {
+      "source_id": 136,
+      "source_file": "136_deepslate_gold_ore.png",
+      "tile_x": 7,
+      "tile_y": 8
+    },
+    {
+      "source_id": 137,
+      "source_file": "137_redstone_ore.png",
+      "tile_x": 8,
+      "tile_y": 8
+    },
+    {
+      "source_id": 138,
+      "source_file": "138_deepslate_redstone_ore.png",
+      "tile_x": 9,
+      "tile_y": 8
+    },
+    {
+      "source_id": 139,
+      "source_file": "139_emerald_ore.png",
+      "tile_x": 10,
+      "tile_y": 8
+    },
+    {
+      "source_id": 140,
+      "source_file": "140_deepslate_emerald_ore.png",
+      "tile_x": 11,
+      "tile_y": 8
+    },
+    {
+      "source_id": 141,
+      "source_file": "141_lapis_ore.png",
+      "tile_x": 12,
+      "tile_y": 8
+    },
+    {
+      "source_id": 142,
+      "source_file": "142_deepslate_lapis_ore.png",
+      "tile_x": 13,
+      "tile_y": 8
+    },
+    {
+      "source_id": 143,
+      "source_file": "143_diamond_ore.png",
+      "tile_x": 14,
+      "tile_y": 8
+    },
+    {
+      "source_id": 144,
+      "source_file": "144_deepslate_diamond_ore.png",
+      "tile_x": 15,
+      "tile_y": 8
+    },
+    {
+      "source_id": 145,
+      "source_file": "145_nether_gold_ore.png",
+      "tile_x": 0,
+      "tile_y": 9
+    },
+    {
+      "source_id": 146,
+      "source_file": "146_nether_quartz_ore.png",
+      "tile_x": 1,
+      "tile_y": 9
+    },
+    {
+      "source_id": 147,
+      "source_file": "147_block_of_coal.png",
+      "tile_x": 2,
+      "tile_y": 9
+    },
+    {
+      "source_id": 148,
+      "source_file": "148_block_of_iron.png",
+      "tile_x": 3,
+      "tile_y": 9
+    },
+    {
+      "source_id": 149,
+      "source_file": "149_block_of_copper.png",
+      "tile_x": 4,
+      "tile_y": 9
+    },
+    {
+      "source_id": 150,
+      "source_file": "150_block_of_gold.png",
+      "tile_x": 5,
+      "tile_y": 9
+    },
+    {
+      "source_id": 151,
+      "source_file": "151_block_of_redstone.png",
+      "tile_x": 6,
+      "tile_y": 9
+    },
+    {
+      "source_id": 152,
+      "source_file": "152_block_of_emerald.png",
+      "tile_x": 7,
+      "tile_y": 9
+    },
+    {
+      "source_id": 153,
+      "source_file": "153_block_of_lapis.png",
+      "tile_x": 8,
+      "tile_y": 9
+    },
+    {
+      "source_id": 154,
+      "source_file": "154_block_of_diamond.png",
+      "tile_x": 9,
+      "tile_y": 9
+    },
+    {
+      "source_id": 155,
+      "source_file": "155_block_of_netherite.png",
+      "tile_x": 10,
+      "tile_y": 9
+    },
+    {
+      "source_id": 156,
+      "source_file": "156_amethyst_block.png",
+      "tile_x": 11,
+      "tile_y": 9
+    },
+    {
+      "source_id": 157,
+      "source_file": "157_budding_amethyst.png",
+      "tile_x": 12,
+      "tile_y": 9
+    },
+    {
+      "source_id": 158,
+      "source_file": "158_water.png",
+      "tile_x": 13,
+      "tile_y": 9
+    },
+    {
+      "source_id": 159,
+      "source_file": "159_lava.png",
+      "tile_x": 14,
+      "tile_y": 9
+    },
+    {
+      "source_id": 160,
+      "source_file": "160_ice.png",
+      "tile_x": 15,
+      "tile_y": 9
+    },
+    {
+      "source_id": 161,
+      "source_file": "161_packed_ice.png",
+      "tile_x": 0,
+      "tile_y": 10
+    },
+    {
+      "source_id": 162,
+      "source_file": "162_blue_ice.png",
+      "tile_x": 1,
+      "tile_y": 10
+    },
+    {
+      "source_id": 163,
+      "source_file": "163_snow_block.png",
+      "tile_x": 2,
+      "tile_y": 10
+    },
+    {
+      "source_id": 164,
+      "source_file": "164_powder_snow.png",
+      "tile_x": 3,
+      "tile_y": 10
+    },
+    {
+      "source_id": 165,
+      "source_file": "165_bone_block.png",
+      "tile_x": 4,
+      "tile_y": 10
+    },
+    {
+      "source_id": 166,
+      "source_file": "166_hay_bale.png",
+      "tile_x": 5,
+      "tile_y": 10
+    },
+    {
+      "source_id": 167,
+      "source_file": "167_dried_kelp_block.png",
+      "tile_x": 6,
+      "tile_y": 10
+    },
+    {
+      "source_id": 168,
+      "source_file": "168_sponge.png",
+      "tile_x": 7,
+      "tile_y": 10
+    },
+    {
+      "source_id": 169,
+      "source_file": "169_wet_sponge.png",
+      "tile_x": 8,
+      "tile_y": 10
+    },
+    {
+      "source_id": 170,
+      "source_file": "170_melon.png",
+      "tile_x": 9,
+      "tile_y": 10
+    },
+    {
+      "source_id": 171,
+      "source_file": "171_pumpkin.png",
+      "tile_x": 10,
+      "tile_y": 10
+    },
+    {
+      "source_id": 172,
+      "source_file": "172_carved_pumpkin.png",
+      "tile_x": 11,
+      "tile_y": 10
+    },
+    {
+      "source_id": 173,
+      "source_file": "173_jack_olantern.png",
+      "tile_x": 12,
+      "tile_y": 10
+    },
+    {
+      "source_id": 174,
+      "source_file": "174_bee_nest.png",
+      "tile_x": 13,
+      "tile_y": 10
+    },
+    {
+      "source_id": 175,
+      "source_file": "175_beehive.png",
+      "tile_x": 14,
+      "tile_y": 10
+    },
+    {
+      "source_id": 176,
+      "source_file": "176_honeycomb_block.png",
+      "tile_x": 15,
+      "tile_y": 10
+    },
+    {
+      "source_id": 177,
+      "source_file": "177_honey_block.png",
+      "tile_x": 0,
+      "tile_y": 11
+    },
+    {
+      "source_id": 178,
+      "source_file": "178_slime_block.png",
+      "tile_x": 1,
+      "tile_y": 11
+    },
+    {
+      "source_id": 179,
+      "source_file": "179_honeycomb.png",
+      "tile_x": 2,
+      "tile_y": 11
+    },
+    {
+      "source_id": 180,
+      "source_file": "180_ochre_froglight.png",
+      "tile_x": 3,
+      "tile_y": 11
+    },
+    {
+      "source_id": 181,
+      "source_file": "181_verdant_froglight.png",
+      "tile_x": 4,
+      "tile_y": 11
+    },
+    {
+      "source_id": 182,
+      "source_file": "182_pearlescent_froglight.png",
+      "tile_x": 5,
+      "tile_y": 11
+    },
+    {
+      "source_id": 183,
+      "source_file": "183_end_stone.png",
+      "tile_x": 6,
+      "tile_y": 11
+    },
+    {
+      "source_id": 184,
+      "source_file": "184_end_stone_bricks.png",
+      "tile_x": 7,
+      "tile_y": 11
+    },
+    {
+      "source_id": 185,
+      "source_file": "185_purpur_block.png",
+      "tile_x": 8,
+      "tile_y": 11
+    },
+    {
+      "source_id": 186,
+      "source_file": "186_purpur_pillar.png",
+      "tile_x": 9,
+      "tile_y": 11
+    },
+    {
+      "source_id": 187,
+      "source_file": "187_chorus_flower.png",
+      "tile_x": 10,
+      "tile_y": 11
+    },
+    {
+      "source_id": 188,
+      "source_file": "188_chorus_plant.png",
+      "tile_x": 11,
+      "tile_y": 11
+    },
+    {
+      "source_id": 189,
+      "source_file": "189_bedrock.png",
+      "tile_x": 12,
+      "tile_y": 11
+    },
+    {
+      "source_id": 190,
+      "source_file": "190_barrier.png",
+      "tile_x": 13,
+      "tile_y": 11
+    },
+    {
+      "source_id": 191,
+      "source_file": "191_structure_void.png",
+      "tile_x": 14,
+      "tile_y": 11
+    },
+    {
+      "source_id": 192,
+      "source_file": "192_light_block.png",
+      "tile_x": 15,
+      "tile_y": 11
+    },
+    {
+      "source_id": 193,
+      "source_file": "193_reinforced_deepslate.png",
+      "tile_x": 0,
+      "tile_y": 12
+    },
+    {
+      "source_id": 194,
+      "source_file": "194_sculk.png",
+      "tile_x": 1,
+      "tile_y": 12
+    },
+    {
+      "source_id": 195,
+      "source_file": "195_sculk_catalyst.png",
+      "tile_x": 2,
+      "tile_y": 12
+    },
+    {
+      "source_id": 196,
+      "source_file": "196_sculk_shrieker.png",
+      "tile_x": 3,
+      "tile_y": 12
+    },
+    {
+      "source_id": 197,
+      "source_file": "197_sculk_sensor.png",
+      "tile_x": 4,
+      "tile_y": 12
+    },
+    {
+      "source_id": 198,
+      "source_file": "198_sculk_vein.png",
+      "tile_x": 5,
+      "tile_y": 12
+    },
+    {
+      "source_id": 199,
+      "source_file": "199_froglight_generic.png",
+      "tile_x": 6,
+      "tile_y": 12
+    },
+    {
+      "source_id": 200,
+      "source_file": "200_pearlescent_froglight.png",
+      "tile_x": 7,
+      "tile_y": 12
+    }
+  ]
+}

@@ -3979,7 +3979,8 @@ func _append_face_arrays(vertices_out: PackedVector3Array, normals_out: PackedVe
     var color := _block_color(block_type)
     if block_type == WOOD and birch_bark_cells.has(cell):
         color = Color(0.78, 0.82, 0.76, 1.0)
-    var tile := _texture_tile_for_block(block_type)
+    var tile := _texture_tile_for_block(block_type, face_index)
+
     var shade := 1.0
     match face_index:
         0: shade = 1.08
@@ -3995,27 +3996,48 @@ func _append_face_arrays(vertices_out: PackedVector3Array, normals_out: PackedVe
         var atlas_uv := _atlas_uv(tile, local_vertex, face_index)
         uvs_out.append(atlas_uv)
 
-func _texture_tile_for_block(block_type: int) -> Vector2i:
+func _source_texture_tile(source_id: int) -> Vector2i:
+    var safe_id := clampi(source_id, 1, 200) - 1
+    return Vector2i(safe_id % 16, safe_id / 16)
+
+func _texture_tile_for_block(block_type: int, face_index: int = 0) -> Vector2i:
     if ore_definitions.has(block_type):
-        return Vector2i(16 + ((block_type - 56) % 16), 0)
+        return _source_texture_tile(129 + ((block_type - ORE_BLOCK_BASE) % 18))
     match block_type:
-        GRASS: return Vector2i(0, 0)
-        DIRT: return Vector2i(1, 0)
-        STONE: return Vector2i(2, 0)
-        WOOD, PLANKS, FURNITURE_CRATE, FURNITURE_TABLE: return Vector2i(3, 0)
-        LEAVES: return Vector2i(4, 0)
-        SAND: return Vector2i(5, 0)
-        SNOW: return Vector2i(6, 0)
-        CRYSTAL: return Vector2i(7, 0)
-        ASH, WHISPER_SOIL: return Vector2i(8, 0)
-        MOSS: return Vector2i(9, 0)
-        WATER: return Vector2i(2, 1)
-        ASH_FLUID, EMBER: return Vector2i(3, 1)
-        COSMIC_STONE: return Vector2i(4, 1)
-        ASTRAL_CRYSTAL: return Vector2i(5, 1)
-        DEEP_CRYSTAL: return Vector2i(6, 1)
-        ARCANE_CRYSTAL, NEBULA_GAS: return Vector2i(7, 1)
-        _ : return Vector2i(7, 3)
+        GRASS:
+            return _source_texture_tile(4 if face_index == 0 else (1 if face_index == 1 else 5))
+        DIRT: return _source_texture_tile(1)
+        STONE: return _source_texture_tile(11)
+        WOOD: return _source_texture_tile(67)
+        PLANKS: return _source_texture_tile(68)
+        LEAVES: return _source_texture_tile(8)
+        GLOW: return _source_texture_tile(108)
+        SAND: return _source_texture_tile(38)
+        SNOW: return _source_texture_tile(163)
+        CRYSTAL: return _source_texture_tile(156)
+        ASH: return _source_texture_tile(103)
+        WHISPER_SOIL: return _source_texture_tile(3)
+        MOSS: return _source_texture_tile(8)
+        SALT_CRUST: return _source_texture_tile(48)
+        EMBER: return _source_texture_tile(109)
+        WATER: return _source_texture_tile(158)
+        ASH_FLUID: return _source_texture_tile(159)
+        COSMIC_STONE: return _source_texture_tile(183)
+        ASTRAL_CRYSTAL, ARCANE_CRYSTAL: return _source_texture_tile(156)
+        DEEP_CRYSTAL: return _source_texture_tile(157)
+        WHISPER_BARK: return _source_texture_tile(85)
+        WHISPER_SHARD: return _source_texture_tile(194)
+        ASTRAL_METAL: return _source_texture_tile(155)
+        COSMIC_ICE: return _source_texture_tile(160)
+        VOID_SHARD: return _source_texture_tile(123)
+        ANTIMATTER: return _source_texture_tile(124)
+        NEBULA_GAS: return _source_texture_tile(199)
+        FURNITURE_CRATE, FURNITURE_TABLE: return _source_texture_tile(68)
+        FURNITURE_LAMP: return _source_texture_tile(180)
+        ARCANE_CONDUIT: return _source_texture_tile(156)
+        AUTOMATION_FORGE: return _source_texture_tile(150)
+        CARGO_RAIL: return _source_texture_tile(155)
+        _ : return _source_texture_tile(11)
 
 func _atlas_uv(tile: Vector2i, local_vertex: Vector3, face_index: int) -> Vector2:
     var local_uv := Vector2(local_vertex.x, 1.0 - local_vertex.y)
@@ -4023,9 +4045,7 @@ func _atlas_uv(tile: Vector2i, local_vertex: Vector3, face_index: int) -> Vector
         local_uv = Vector2(local_vertex.x, local_vertex.z)
     elif face_index == 2 or face_index == 3:
         local_uv = Vector2(local_vertex.z, 1.0 - local_vertex.y)
-    var atlas_x := float(tile.x % 8)
-    var atlas_y := float(tile.y + tile.x / 8)
-    return Vector2((atlas_x + 0.04 + local_uv.x * 0.92) / 8.0, (atlas_y + 0.04 + local_uv.y * 0.92) / 4.0)
+    return Vector2((float(tile.x) + 0.04 + local_uv.x * 0.92) / 16.0, (float(tile.y) + 0.04 + local_uv.y * 0.92) / 16.0)
 
 func _face_vertices(face_index: int) -> Array[Vector3]:
     match face_index:
