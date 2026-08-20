@@ -1,7 +1,7 @@
 extends Node
 
 func _ready() -> void:
-    var atlas := load("res://assets/textures/voxel_atlas.png") as Texture2D
+    var atlas := load("res://assets/textures/voxelverse_texture_pack_v2/voxelverse_atlas.png") as Texture2D
     var atlas_ok: bool = is_instance_valid(atlas) and atlas.get_width() == 256 and atlas.get_height() == 256
     var source_count := 0
     var source_dir := DirAccess.open("res://assets/textures/voxelverse_texture_pack_v2/textures")

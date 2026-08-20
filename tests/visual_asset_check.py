@@ -2,7 +2,7 @@ from pathlib import Path
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
-ATLAS = ROOT / "assets/textures/voxel_atlas.png"
+ATLAS = ROOT / "assets/textures/voxelverse_texture_pack_v2/voxelverse_atlas.png"
 WORLD = ROOT / "core/voxel_world.gd"
 SURFACE_SHADER = ROOT / "shaders/surface_sky.gdshader"
 

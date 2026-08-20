@@ -20,7 +20,7 @@ const NPC_DATA_PATH := "res://data/npcs.json"
 const QUEST_DATA_PATH := "res://data/quests.json"
 const HORROR_DATA_PATH := "res://data/horror_encounters.json"
 const BOSS_ARENA_DATA_PATH := "res://data/boss_arenas.json"
-const VOXEL_ATLAS_PATH := "res://assets/textures/voxel_atlas.png"
+const VOXEL_ATLAS_PATH := "res://assets/textures/voxelverse_texture_pack_v2/voxelverse_atlas.png"
 const TELEMETRY_LOG_PATH := "user://voxelverse_telemetry.csv"
 
 const WORLD_SIZE_X: int = 64
