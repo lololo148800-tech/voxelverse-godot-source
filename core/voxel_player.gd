@@ -14,6 +14,7 @@ const MAX_MANA: float = 100.0
 
 signal survival_changed
 signal player_died
+signal damage_taken(amount: float, source: String)
 
 var camera: Camera3D
 var yaw: float = -0.58
@@ -180,8 +181,21 @@ func touch_jump() -> void:
         return
     if creative_mode or astral_mode:
         velocity.y = JUMP_SPEED
+    elif _is_in_water():
+        velocity.y = 3.4
     elif is_on_floor():
         velocity.y = JUMP_SPEED
+
+func _is_in_water() -> bool:
+    var world := get_parent()
+    if world == null or not world.has_method("_get_block"):
+        return false
+    var base := Vector3i(floori(global_position.x), floori(global_position.y + 0.15), floori(global_position.z))
+    for offset in [Vector3i.ZERO, Vector3i.UP, Vector3i(0, 2, 0)]:
+        var block_type: int = int(world.call("_get_block", base + offset))
+        if block_type == 50 or block_type == 51:
+            return true
+    return false
 
 func set_creative_mode(active: bool) -> void:
     creative_mode = active
@@ -233,7 +247,10 @@ func _physics_process(delta: float) -> void:
     move_direction.y = 0.0
     move_direction = move_direction.normalized() if move_direction.length_squared() > 0.0 else Vector3.ZERO
 
+    var in_water := _is_in_water()
     var speed := SPRINT_SPEED if Input.is_key_pressed(KEY_SHIFT) else WALK_SPEED
+    if in_water and not creative_mode:
+        speed *= 0.68
     if astral_mode:
         speed *= 0.72
     if slowness_timer > 0.0 and not creative_mode:
@@ -250,6 +267,8 @@ func _physics_process(delta: float) -> void:
             velocity.y = maxf(velocity.y - 7.0 * delta, -5.0)
         else:
             velocity.y = move_toward(velocity.y, 0.0, GRAVITY * 0.12 * delta)
+    elif in_water:
+        velocity.y = move_toward(velocity.y, -0.55, GRAVITY * 0.42 * delta)
     elif not is_on_floor():
         velocity.y -= GRAVITY * delta
     elif Input.is_action_pressed("jump") or Input.is_key_pressed(KEY_SPACE):
@@ -323,6 +342,7 @@ func take_damage(amount: float, source: String = "") -> void:
         "ironbound":
             multiplier = 1.75
     health = maxf(0.0, health - mitigated_amount * multiplier)
+    damage_taken.emit(mitigated_amount * multiplier, source)
     survival_changed.emit()
     if health <= 0.0:
         _die(source)

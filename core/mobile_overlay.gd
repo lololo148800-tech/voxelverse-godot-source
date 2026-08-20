@@ -7,6 +7,8 @@ var selected_slot: int = 0
 var hotbar_items: Array[int] = []
 var health_ratio: float = 1.0
 var hunger_ratio: float = 1.0
+var thirst_ratio: float = 1.0
+var energy_ratio: float = 1.0
 var _last_draw_size := Vector2.ZERO
 
 # Reference-aligned, original palette: translucent grey-green controls over a bright world.
@@ -41,11 +43,12 @@ func set_hotbar_items(items: Array[int]) -> void:
     hotbar_items = items.duplicate()
     queue_redraw()
 
-func set_survival_values(current_health: float, max_health: float, current_hunger: float, max_hunger: float) -> void:
-    # These ratios are retained for future status affordances, but the current reference HUD does not draw them.
-    # Do not invalidate the full CanvasItem on every survival tick.
+func set_survival_values(current_health: float, max_health: float, current_hunger: float, max_hunger: float, current_thirst: float = 20.0, max_thirst: float = 20.0, current_energy: float = 20.0, max_energy: float = 20.0) -> void:
     health_ratio = clampf(current_health / maxf(max_health, 0.1), 0.0, 1.0)
     hunger_ratio = clampf(current_hunger / maxf(max_hunger, 0.1), 0.0, 1.0)
+    thirst_ratio = clampf(current_thirst / maxf(max_thirst, 0.1), 0.0, 1.0)
+    energy_ratio = clampf(current_energy / maxf(max_energy, 0.1), 0.0, 1.0)
+    queue_redraw()
 
 func _draw() -> void:
     var viewport_size := size
@@ -54,10 +57,27 @@ func _draw() -> void:
     var scale_factor := clampf(minf(viewport_size.x / REFERENCE_WIDTH, viewport_size.y / REFERENCE_HEIGHT), 0.72, 1.15)
     # The supplied reference keeps the gameplay HUD quiet: no permanent text panel or heart rows.
     _draw_top_strip(viewport_size, scale_factor)
+    _draw_survival_bars(viewport_size, scale_factor)
     _draw_left_pad(viewport_size, scale_factor)
     _draw_action_buttons(viewport_size, scale_factor)
     _draw_hotbar(viewport_size, scale_factor)
     _draw_first_person_hand(viewport_size, scale_factor)
+
+func _draw_survival_bars(viewport_size: Vector2, scale_factor: float) -> void:
+    var origin := Vector2(28.0, 76.0) * scale_factor
+    var width := 228.0 * scale_factor
+    var height := 13.0 * scale_factor
+    var gap := 7.0 * scale_factor
+    _draw_status_bar(origin, width, height, health_ratio, Color("d84f5c"), Color("ffb1a7"))
+    _draw_status_bar(origin + Vector2(0.0, height + gap), width, height, hunger_ratio, Color("d9a447"), Color("ffe3a0"))
+    _draw_status_bar(origin + Vector2(0.0, (height + gap) * 2.0), width, height, thirst_ratio, Color("3d9ed1"), Color("9bdfff"))
+    _draw_status_bar(origin + Vector2(0.0, (height + gap) * 3.0), width, height, energy_ratio, Color("5cbf78"), Color("b4f5c6"))
+
+func _draw_status_bar(origin: Vector2, width: float, height: float, ratio: float, fill_color: Color, edge_color: Color) -> void:
+    var background := Rect2(origin, Vector2(width, height))
+    draw_rect(background, Color(0.02, 0.035, 0.03, 0.74), true)
+    draw_rect(Rect2(origin, Vector2(width * clampf(ratio, 0.0, 1.0), height)), fill_color, true)
+    draw_rect(background, edge_color, false, 2.0)
 
 func _draw_top_strip(viewport_size: Vector2, scale_factor: float) -> void:
     var icon_size := 52.0 * scale_factor

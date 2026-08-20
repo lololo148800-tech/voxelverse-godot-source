@@ -272,6 +272,11 @@ var telemetry_log: FileAccess
 var telemetry_log_enabled: bool = false
 var telemetry_log_records: int = 0
 var mobile_overlay: Control
+var feedback_audio: AudioStreamPlayer
+var feedback_playback: AudioStreamGeneratorPlayback
+var feedback_overlay: ColorRect
+var feedback_label: Label
+var feedback_timer: float = 0.0
 var compact_hp_bar: ProgressBar
 var compact_hunger_bar: ProgressBar
 var compact_thirst_bar: ProgressBar
@@ -350,6 +355,11 @@ var recipes: Array[Dictionary] = [
 
 func _exit_tree() -> void:
     _close_telemetry_log()
+    if is_instance_valid(feedback_audio):
+        feedback_audio.stop()
+        feedback_audio.stream = null
+        feedback_audio.free()
+    feedback_playback = null
 
 func _ready() -> void:
     _load_world_config()
@@ -366,6 +376,8 @@ func _ready() -> void:
     _load_boss_arena_definitions()
     _load_structure_definitions()
     _setup_environment()
+    if DisplayServer.get_name() != "headless":
+        _setup_feedback_audio()
     voxel_atlas_texture = load(VOXEL_ATLAS_PATH) as Texture2D
     _generate_world()
     _load_world()
@@ -458,6 +470,11 @@ func _process(delta: float) -> void:
     _update_mob_activation()
     _update_quests()
     _update_boss_arena()
+    feedback_timer = maxf(0.0, feedback_timer - delta)
+    if is_instance_valid(feedback_overlay):
+        feedback_overlay.color.a = 0.24 * clampf(feedback_timer / 0.32, 0.0, 1.0)
+    if is_instance_valid(feedback_label) and feedback_timer <= 0.0:
+        feedback_label.visible = false
     hud_tick += delta
     if hud_tick >= 0.1:
         hud_tick = 0.0
@@ -576,7 +593,7 @@ func _setup_environment() -> void:
     astral_sky.sky_material = astral_material
     environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
     environment.ambient_light_color = Color("e4f1d8")
-    environment.ambient_light_energy = 1.52
+    environment.ambient_light_energy = 1.18
     environment.fog_enabled = false
     environment.fog_light_color = Color("c8e6c9")
     environment.fog_light_energy = 0.38
@@ -591,7 +608,7 @@ func _setup_environment() -> void:
     sun.name = "Sun"
     sun.rotation_degrees = Vector3(-55.0, -35.0, 0.0)
     sun.light_color = Color("fff9e5")
-    sun.light_energy = 1.65
+    sun.light_energy = 1.35
     sun.shadow_enabled = true
     sun_light = sun
     add_child(sun)
@@ -611,9 +628,10 @@ func _apply_renderer_profile() -> void:
         _ : mob_simulation_radius = 26.0
     match applied_profile:
         "Слабый маяк":
-            environment.fog_density = 0.0045
-            environment.fog_sky_affect = 0.12
-            environment.ambient_light_energy = 1.02
+            environment.fog_density = 0.0028
+            environment.fog_sky_affect = 0.08
+            environment.ambient_light_energy = 0.88
+            sun_light.light_energy = 1.28
             sun_light.shadow_enabled = false
         "Дальний обзор":
             environment.fog_density = 0.0028
@@ -1583,6 +1601,7 @@ func _setup_player() -> void:
     player.set_creative_mode(world_mode == "Творческий тест")
     player.survival_changed.connect(_on_player_survival_changed)
     player.player_died.connect(_on_player_died)
+    player.damage_taken.connect(_on_player_damage_taken)
     _apply_pending_player_state()
 
 func _setup_hud() -> void:
@@ -1790,6 +1809,52 @@ func _setup_hud() -> void:
         mobile_overlay.name = "MobileVoxelControls"
         layer.add_child(mobile_overlay)
     _create_telemetry_overlay(layer)
+    _create_feedback_overlay(layer)
+
+func _setup_feedback_audio() -> void:
+    feedback_audio = AudioStreamPlayer.new()
+    feedback_audio.name = "GameplayFeedbackAudio"
+    var stream := AudioStreamGenerator.new()
+    stream.mix_rate = 22050.0
+    stream.buffer_length = 0.35
+    feedback_audio.stream = stream
+    add_child(feedback_audio)
+    feedback_audio.play()
+    feedback_playback = feedback_audio.get_stream_playback() as AudioStreamGeneratorPlayback
+
+func _play_feedback_tone(frequency: float, duration: float, volume: float = 0.16) -> void:
+    if not is_instance_valid(feedback_playback):
+        return
+    var sample_rate := 22050.0
+    var sample_count := mini(6000, maxi(1, int(sample_rate * duration)))
+    for index in range(sample_count):
+        var envelope := 1.0 - float(index) / float(sample_count)
+        var sample := sin(TAU * frequency * float(index) / sample_rate) * volume * envelope
+        feedback_playback.push_frame(Vector2(sample, sample))
+
+func _create_feedback_overlay(layer: CanvasLayer) -> void:
+    feedback_overlay = ColorRect.new()
+    feedback_overlay.name = "DamageFlash"
+    feedback_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    feedback_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    feedback_overlay.color = Color(0.75, 0.05, 0.03, 0.0)
+    layer.add_child(feedback_overlay)
+    feedback_label = Label.new()
+    feedback_label.name = "DamageFeedback"
+    feedback_label.position = Vector2(520.0, 112.0)
+    feedback_label.size = Vector2(600.0, 44.0)
+    feedback_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    feedback_label.add_theme_font_size_override("font_size", 24)
+    feedback_label.add_theme_color_override("font_color", Color("ffd4c9"))
+    feedback_label.visible = false
+    layer.add_child(feedback_label)
+
+func _on_player_damage_taken(amount: float, source: String) -> void:
+    feedback_timer = 0.32
+    if is_instance_valid(feedback_label):
+        feedback_label.text = "-%.1f HP%s" % [amount, ("  ·  " + source) if not source.is_empty() else ""]
+        feedback_label.visible = true
+    _play_feedback_tone(180.0, 0.08, 0.12)
 
 func _create_telemetry_overlay(layer: CanvasLayer) -> void:
     var viewport_size := get_viewport().get_visible_rect().size
@@ -2674,15 +2739,17 @@ func _update_hud() -> void:
         var selected_slot: int = maxi(0, available_hotbar.find(selected_block))
         var health_bucket := int(player.health) if is_instance_valid(player) else -1
         var hunger_bucket := int(player.hunger) if is_instance_valid(player) else -1
+        var thirst_bucket := int(player.thirst) if is_instance_valid(player) else -1
+        var energy_bucket := int(player.energy) if is_instance_valid(player) else -1
         var hotbar_signature := ",".join(PackedStringArray(available_hotbar.map(func(item_id: int) -> String: return str(item_id))) )
-        var overlay_signature := "%d|%d|%d|%s|%s" % [selected_slot, health_bucket, hunger_bucket, modal_open, hotbar_signature]
+        var overlay_signature := "%d|%d|%d|%d|%d|%s|%s" % [selected_slot, health_bucket, hunger_bucket, thirst_bucket, energy_bucket, modal_open, hotbar_signature]
         if overlay_signature != _last_overlay_signature:
             mobile_overlay.visible = not modal_open
             mobile_overlay.call("set_selected_slot", selected_slot)
             if mobile_overlay.has_method("set_hotbar_items"):
                 mobile_overlay.call("set_hotbar_items", available_hotbar)
             if is_instance_valid(player) and mobile_overlay.has_method("set_survival_values"):
-                mobile_overlay.call("set_survival_values", player.health, player.MAX_HEALTH, player.hunger, player.MAX_HUNGER)
+                mobile_overlay.call("set_survival_values", player.health, player.MAX_HEALTH, player.hunger, player.MAX_HUNGER, player.thirst, player.MAX_THIRST, player.energy, player.MAX_ENERGY)
             _last_overlay_signature = overlay_signature
     for overlay_label in [health_label, hunger_label, thirst_label, energy_label, biome_label, quest_label, rules_label, boss_label, weather_label, npc_label, dimension_label, storage_hint_label, ranged_hint_label, hotbar_label, target_label, status_label]:
         if is_instance_valid(overlay_label):
@@ -3360,6 +3427,10 @@ func _begin_block_break() -> void:
     break_progress = 0.0
     break_cell = target_cell
     break_block_type = _get_block(target_cell)
+    if break_block_type == WATER or break_block_type == ASH_FLUID:
+        generated_message = "Жидкость нельзя ломать: войди в воду или используй ёмкость"
+        _end_block_break()
+        return
     if world_mode == "Творческий тест" or (is_instance_valid(player) and player.creative_mode):
         break_progress = 1.0
         _complete_block_break()
@@ -3764,6 +3835,9 @@ func _build_chunk_collision_faces(key: Vector2i) -> PackedVector3Array:
     var chunk: Dictionary = chunk_storage.get(key, {})
     for cell_variant in chunk.keys():
         var cell: Vector3i = cell_variant
+        var block_type := int(chunk[cell])
+        if block_type == WATER or block_type == ASH_FLUID:
+            continue
         for face_index in range(6):
             if _get_block(cell + _face_offset(face_index)) == AIR:
                 var base := Vector3(cell)
@@ -4384,6 +4458,11 @@ func _on_player_survival_changed() -> void:
 
 func _on_player_died() -> void:
     generated_message = "Ты погиб" if not hardcore_mode else "Режим One-Life завершён"
+    feedback_timer = 1.1
+    if is_instance_valid(feedback_label):
+        feedback_label.text = generated_message
+        feedback_label.visible = true
+    _play_feedback_tone(120.0, 0.24, 0.18)
     _update_hud()
 
 func _respawn_player() -> void:
