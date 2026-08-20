@@ -12,12 +12,12 @@ var energy_ratio: float = 1.0
 var _last_draw_size := Vector2.ZERO
 
 # Reference-aligned, original palette: translucent grey-green controls over a bright world.
-const PANEL_FILL := Color(0.44, 0.48, 0.44, 0.24)
-const PANEL_FILL_DARK := Color(0.20, 0.24, 0.22, 0.24)
-const PANEL_BORDER := Color(0.08, 0.12, 0.10, 0.62)
-const PANEL_INNER := Color(0.82, 0.88, 0.80, 0.26)
-const ICON := Color(0.07, 0.11, 0.09, 0.92)
-const ICON_SOFT := Color(0.16, 0.22, 0.18, 0.80)
+const PANEL_FILL := Color(0.44, 0.48, 0.44, 0.18)
+const PANEL_FILL_DARK := Color(0.20, 0.24, 0.22, 0.17)
+const PANEL_BORDER := Color(0.08, 0.12, 0.10, 0.48)
+const PANEL_INNER := Color(0.82, 0.88, 0.80, 0.20)
+const ICON := Color(0.07, 0.11, 0.09, 0.86)
+const ICON_SOFT := Color(0.16, 0.22, 0.18, 0.72)
 const SELECTED := Color(0.92, 0.96, 0.88, 0.96)
 
 func _ready() -> void:
@@ -126,21 +126,21 @@ func _draw_top_icon(rect: Rect2, index: int, scale_factor: float) -> void:
             draw_line(Vector2(rect.position.x + 13.0 * scale_factor, y), Vector2(rect.end.x - 12.0 * scale_factor, y), ICON, width)
 
 func _draw_left_pad(viewport_size: Vector2, scale_factor: float) -> void:
-    var pad_size := Vector2(196.0, 196.0) * scale_factor
-    var pad_rect := Rect2(Vector2(58.0, 374.0) * scale_factor, pad_size)
+    var pad_size := Vector2(178.0, 178.0) * scale_factor
+    var pad_rect := Rect2(Vector2(62.0, 392.0) * scale_factor, pad_size)
     draw_rect(pad_rect, PANEL_FILL_DARK, true)
     draw_rect(pad_rect, PANEL_BORDER, false, 3.0 * scale_factor)
     draw_rect(pad_rect.grow(-7.0 * scale_factor), PANEL_INNER, false, 2.0 * scale_factor)
     var center := pad_rect.get_center() + Vector2(0.0, 5.0 * scale_factor)
     var cross := Color(0.06, 0.10, 0.08, 0.24)
-    draw_line(center + Vector2(-70.0, 0.0) * scale_factor, center + Vector2(70.0, 0.0) * scale_factor, cross, 2.0 * scale_factor)
-    draw_line(center + Vector2(0.0, -70.0) * scale_factor, center + Vector2(0.0, 70.0) * scale_factor, cross, 2.0 * scale_factor)
+    draw_line(center + Vector2(-62.0, 0.0) * scale_factor, center + Vector2(62.0, 0.0) * scale_factor, cross, 2.0 * scale_factor)
+    draw_line(center + Vector2(0.0, -62.0) * scale_factor, center + Vector2(0.0, 62.0) * scale_factor, cross, 2.0 * scale_factor)
     draw_circle(center, 13.0 * scale_factor, Color(0.76, 0.82, 0.76, 0.55))
     draw_circle(center, 13.0 * scale_factor, PANEL_BORDER, false, 2.0 * scale_factor)
-    _draw_arrow(center + Vector2(0.0, -55.0) * scale_factor, Vector2.UP, scale_factor)
-    _draw_arrow(center + Vector2(-55.0, 0.0) * scale_factor, Vector2.LEFT, scale_factor)
-    _draw_arrow(center + Vector2(55.0, 0.0) * scale_factor, Vector2.RIGHT, scale_factor)
-    _draw_arrow(center + Vector2(0.0, 55.0) * scale_factor, Vector2.DOWN, scale_factor)
+    _draw_arrow(center + Vector2(0.0, -49.0) * scale_factor, Vector2.UP, scale_factor)
+    _draw_arrow(center + Vector2(-49.0, 0.0) * scale_factor, Vector2.LEFT, scale_factor)
+    _draw_arrow(center + Vector2(49.0, 0.0) * scale_factor, Vector2.RIGHT, scale_factor)
+    _draw_arrow(center + Vector2(0.0, 49.0) * scale_factor, Vector2.DOWN, scale_factor)
     # Separate action/health touch button under the pad, as in the supplied layout.
     var small_rect := Rect2(Vector2(370.0, 502.0) * scale_factor, Vector2(64.0, 64.0) * scale_factor)
     _draw_reference_button(small_rect, scale_factor)
@@ -175,16 +175,16 @@ func _draw_reference_button(rect: Rect2, scale_factor: float) -> void:
     draw_rect(rect.grow(-5.0 * scale_factor), PANEL_INNER, false, 2.0 * scale_factor)
 
 func _draw_hotbar(viewport_size: Vector2, scale_factor: float) -> void:
-    var slot_size := 48.0 * scale_factor
+    var slot_size := 46.0 * scale_factor
     var gap := 3.0 * scale_factor
     var total_width := slot_size * 9.0 + gap * 8.0
     var origin := Vector2((viewport_size.x - total_width) * 0.5, viewport_size.y - slot_size - 8.0 * scale_factor)
     for index in range(9):
         var rect := Rect2(origin + Vector2((slot_size + gap) * index, 0.0), Vector2(slot_size, slot_size))
-        draw_rect(rect, Color(0.08, 0.12, 0.10, 0.58), true)
-        draw_rect(rect, Color(0.16, 0.22, 0.17, 0.82), false, 2.0 * scale_factor)
-        draw_rect(rect.grow(-4.0 * scale_factor), Color(0.25, 0.34, 0.23, 0.24), true)
-        draw_rect(rect.grow(-1.0 * scale_factor), SELECTED if index == selected_slot else Color(0.48, 0.56, 0.46, 0.62), false, 1.5 * scale_factor)
+        draw_rect(rect, Color(0.08, 0.12, 0.10, 0.46), true)
+        draw_rect(rect, Color(0.16, 0.22, 0.17, 0.70), false, 1.6 * scale_factor)
+        draw_rect(rect.grow(-3.0 * scale_factor), Color(0.25, 0.34, 0.23, 0.18), true)
+        draw_rect(rect.grow(-1.0 * scale_factor), SELECTED if index == selected_slot else Color(0.48, 0.56, 0.46, 0.58), false, 2.0 * scale_factor)
         if index < hotbar_items.size():
             _draw_subtle_hotbar_icon(rect, hotbar_items[index], scale_factor)
 

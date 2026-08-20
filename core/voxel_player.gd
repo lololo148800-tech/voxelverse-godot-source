@@ -18,7 +18,7 @@ signal damage_taken(amount: float, source: String)
 
 var camera: Camera3D
 var yaw: float = -0.58
-var pitch: float = -0.08
+var pitch: float = -0.045
 var look_enabled: bool = true
 var touch_move_index: int = -1
 var touch_look_index: int = -1
@@ -57,10 +57,10 @@ var movement_diagnostic_timer: float = 0.0
 func _ready() -> void:
     camera = Camera3D.new()
     camera.name = "PlayerCamera"
-    camera.position = Vector3(0.0, 1.62, 0.0)
+    camera.position = Vector3(0.0, 1.70, 0.0)
     camera.rotation.x = pitch
     camera.current = true
-    camera.fov = 72.0
+    camera.fov = 78.0
     add_child(camera)
     respawn_position = global_position
     _ensure_movement_input_actions()

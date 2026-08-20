@@ -624,7 +624,7 @@ func _setup_environment() -> void:
     astral_sky.sky_material = astral_material
     environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
     environment.ambient_light_color = Color("e4f1d8")
-    environment.ambient_light_energy = 1.18
+    environment.ambient_light_energy = 1.24
     environment.fog_enabled = false
     environment.fog_light_color = Color("c8e6c9")
     environment.fog_light_energy = 0.38
@@ -639,7 +639,7 @@ func _setup_environment() -> void:
     sun.name = "Sun"
     sun.rotation_degrees = Vector3(-55.0, -35.0, 0.0)
     sun.light_color = Color("fff9e5")
-    sun.light_energy = 1.35
+    sun.light_energy = 1.42
     sun.shadow_enabled = true
     sun_light = sun
     add_child(sun)
@@ -661,8 +661,8 @@ func _apply_renderer_profile() -> void:
         "Слабый маяк":
             environment.fog_density = 0.0028
             environment.fog_sky_affect = 0.08
-            environment.ambient_light_energy = 0.88
-            sun_light.light_energy = 1.28
+            environment.ambient_light_energy = 1.04
+            sun_light.light_energy = 1.34
             sun_light.shadow_enabled = false
         "Дальний обзор":
             environment.fog_density = 0.0028
@@ -679,7 +679,7 @@ func _apply_renderer_profile() -> void:
         _:
             environment.fog_density = 0.0035
             environment.fog_sky_affect = 0.15
-            environment.ambient_light_energy = 1.06
+            environment.ambient_light_energy = 1.18
             sun_light.shadow_enabled = true
             sun_light.shadow_bias = 0.05
 
@@ -4195,7 +4195,7 @@ func _block_color(block_type: int) -> Color:
         return Color(str(ore_definitions[block_type].get("color", "ffffff")))
     match block_type:
         GRASS:
-            return Color("5aad5f")
+            return Color("8fcf78")
         DIRT:
             return Color("805d40")
         STONE:
@@ -4203,7 +4203,7 @@ func _block_color(block_type: int) -> Color:
         WOOD:
             return Color("936746")
         LEAVES:
-            return Color("4b9b54")
+            return Color("78c96b")
         GLOW:
             return Color("f2bc53")
         SAND:
@@ -4225,7 +4225,7 @@ func _block_color(block_type: int) -> Color:
         ECHO_LANTERN:
             return Color("b77cf0")
         MOSS:
-            return Color("62b879")
+            return Color("83c978")
         SALT_CRUST:
             return Color("e4d4a0")
         EMBER:
